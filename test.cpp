@@ -9,7 +9,7 @@ using namespace std;
 
 namespace {
     template<class T>
-    constexpr T epsilon = static_cast<T>(0.0000001);
+    constexpr T epsilon = static_cast<T>(1e-15);
 
     int status = 0;
 
