@@ -19,6 +19,10 @@ double assoc_legendre(unsigned l, unsigned m, double x) {
     }
 }
 
+double beta(double x, double y) {
+    return boost::math::beta(x, y);
+}
+
 double legendre(unsigned l, double x) {
     if (_CSTD isnan(x)) {
         return x;
