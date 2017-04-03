@@ -186,9 +186,16 @@ int main() {
         test_legendre(2, 1.0, 1.0);
         test_legendre(2, -1.0, 1.0);
         test_legendre(2, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+
+        try {
+            test_beta(0.0, 0.0, 0.0);
+            std::cerr << "Expected exception\n";
+            status = 1;
+        } catch(std::domain_error const&) {}
     } catch(...) {
         std::cerr << "Accepted unexpected exception\n";
         status = 1;
     }
+
     return status;
 }
