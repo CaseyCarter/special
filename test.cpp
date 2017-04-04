@@ -1,5 +1,6 @@
 #include "special.hpp"
 
+#include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <limits>
@@ -13,21 +14,6 @@ namespace {
 
     int status = 0;
 
-    [[noreturn]] void fail(int const lineno, const char* const expr) {
-        cerr << __FILE__ << '(' << lineno << "): Check failed: \"" << expr << "\"\n";
-        status = 1;
-    }
-
-#define CHECK(...) ((__VA_ARGS__) ? void() : fail(__LINE__, #__VA_ARGS__))
-
-    template<class T, class U, class C = common_type_t<T, U>>
-    constexpr T narrow_cast(U const u) noexcept {
-        auto const result = static_cast<T>(u);
-        CHECK(C(result) == C(u)); // FIXME: cascade.
-        CHECK(is_signed_v<T> == is_signed_v<U> || result > T{} == u > U{}); // FIXME: cascade.
-        return result;
-    }
-
     template<class T, class First, class... Args, size_t... Is>
     void log_failure(T const expected, T const actual, char const * const name,
         std::index_sequence<Is...>, First&& first, Args&&... args)
@@ -36,7 +22,7 @@ namespace {
         int unused[] = {0, ((cerr << ", " << args), 0)...};
         (void)unused;
         cerr << "): Actual: " << actual << ", Expected: " << expected << "\n\n";
-        ::status = 1;
+        status = 1;
     }
 
     template<class T, class... Args>
@@ -86,8 +72,6 @@ namespace {
         TEST(hypot, static_cast<long double>(result),
             static_cast<long double>(dx), static_cast<long double>(dy), static_cast<long double>(dz));
     }
-
-#undef TEST
 }
 
 constexpr auto qNaN = numeric_limits<double>::quiet_NaN();
