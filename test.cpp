@@ -74,78 +74,93 @@ namespace {
     }
 
     void test_legendre(unsigned const l, double const x, double const result) {
-        TEST(legendre, result, l, x);
+        TEST(legendre,  result, l, x);
         TEST(legendref, static_cast<float>(result), l, static_cast<float>(x));
         TEST(legendrel, static_cast<long double>(result), l, static_cast<long double>(x));
+    }
+
+    void test_hypot(double dx, double dy, double dz, double result) {
+        TEST(hypot, result, dx, dy, dz);
+        TEST(hypot, static_cast<float>(result),
+            static_cast<float>(dx), static_cast<float>(dy), static_cast<float>(dz));
+        TEST(hypot, static_cast<long double>(result),
+            static_cast<long double>(dx), static_cast<long double>(dy), static_cast<long double>(dz));
     }
 
 #undef TEST
 }
 
+constexpr auto qNaN = numeric_limits<double>::quiet_NaN();
+
 int main() {
     try {
+        test_hypot(0.0, 0.0, 0.0, 0.0);
+        test_hypot(1.0, 0.0, 0.0, 1.0);
+        test_hypot(0.0, 1.0, 0.0, 1.0);
+        test_hypot(0.0, 0.0, 1.0, 1.0);
+
         test_assoc_laguerre(0, 0, 0.0, 1.0);
         test_assoc_laguerre(0, 0, 0.5, 1.0);
         test_assoc_laguerre(0, 0, -0.5, 1.0);
         test_assoc_laguerre(0, 0, 1.0, 1.0);
         test_assoc_laguerre(0, 0, -1.0, 1.0);
-        test_assoc_laguerre(0, 0, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_assoc_laguerre(0, 0, qNaN, qNaN);
 
         test_assoc_laguerre(0, 1, 0.0, 1.0);
         test_assoc_laguerre(0, 1, 0.5, 1.0);
         test_assoc_laguerre(0, 1, -0.5, 1.0);
         test_assoc_laguerre(0, 1, 1.0, 1.0);
         test_assoc_laguerre(0, 1, -1.0, 1.0);
-        test_assoc_laguerre(0, 1, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_assoc_laguerre(0, 1, qNaN, qNaN);
 
         test_assoc_laguerre(1, 0, 0.0, 1.0);
         test_assoc_laguerre(1, 0, 0.5, 0.5);
         test_assoc_laguerre(1, 0, -0.5, 1.5);
         test_assoc_laguerre(1, 0, 1.0, 0.0);
         test_assoc_laguerre(1, 0, -1.0, 2.0);
-        test_assoc_laguerre(1, 0, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_assoc_laguerre(1, 0, qNaN, qNaN);
 
         test_assoc_laguerre(1, 1, 0.0, 2.0);
         test_assoc_laguerre(1, 1, 0.5, 1.5);
         test_assoc_laguerre(1, 1, -0.5, 2.5);
         test_assoc_laguerre(1, 1, 1.0, 1.0);
         test_assoc_laguerre(1, 1, -1.0, 3.0);
-        test_assoc_laguerre(1, 1, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_assoc_laguerre(1, 1, qNaN, qNaN);
 
         test_assoc_laguerre(2, 0, 0.0, 1.0);
         test_assoc_laguerre(2, 0, 0.5, 0.125);
         test_assoc_laguerre(2, 0, -0.5, 2.125);
         test_assoc_laguerre(2, 0, 1.0, -0.5);
         test_assoc_laguerre(2, 0, -1.0, 3.5);
-        test_assoc_laguerre(2, 0, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_assoc_laguerre(2, 0, qNaN, qNaN);
 
         test_assoc_legendre(0, 0, 0.0, 1.0);
         test_assoc_legendre(0, 0, 0.5, 1.0);
         test_assoc_legendre(0, 0, -0.5, 1.0);
         test_assoc_legendre(0, 0, 1.0, 1.0);
         test_assoc_legendre(0, 0, -1.0, 1.0);
-        test_assoc_legendre(0, 0, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_assoc_legendre(0, 0, qNaN, qNaN);
 
         test_assoc_legendre(1, 0, 0.0, 0.0);
         test_assoc_legendre(1, 0, 0.5, 0.5);
         test_assoc_legendre(1, 0, -0.5, -0.5);
         test_assoc_legendre(1, 0, 1.0, 1.0);
         test_assoc_legendre(1, 0, -1.0, -1.0);
-        test_assoc_legendre(1, 0, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_assoc_legendre(1, 0, qNaN, qNaN);
 
         test_assoc_legendre(1, 1, 0.0, -1.0);
         test_assoc_legendre(1, 1, 0.5, -sqrt(3) / 2);
         test_assoc_legendre(1, 1, -0.5, -sqrt(3) / 2);
         test_assoc_legendre(1, 1, 1.0, 0.0);
         test_assoc_legendre(1, 1, -1.0, 0.0);
-        test_assoc_legendre(1, 1, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_assoc_legendre(1, 1, qNaN, qNaN);
 
         test_assoc_legendre(2, 0, 0.0, -0.5);
         test_assoc_legendre(2, 0, 0.5, -0.125);
         test_assoc_legendre(2, 0, -0.5, -0.125);
         test_assoc_legendre(2, 0, 1.0, 1.0);
         test_assoc_legendre(2, 0, -1.0, 1.0);
-        test_assoc_legendre(2, 0, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_assoc_legendre(2, 0, qNaN, qNaN);
 
         test_beta(1.0, 1.0, 1.0/1);
         test_beta(1.0, 2.0, 1.0/2);
@@ -167,26 +182,29 @@ int main() {
 
         test_beta(5.0, 5.0, 1.0/630);
 
+        test_beta(1.0, qNaN, qNaN);
+        test_beta(qNaN, 1.0, qNaN);
+
         test_legendre(0, 0.0, 1.0);
         test_legendre(0, 0.5, 1.0);
         test_legendre(0, -0.5, 1.0);
         test_legendre(0, 1.0, 1.0);
         test_legendre(0, -1.0, 1.0);
-        test_legendre(0, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_legendre(0, qNaN, qNaN);
 
         test_legendre(1, 0.0, 0.0);
         test_legendre(1, 0.5, 0.5);
         test_legendre(1, -0.5, -0.5);
         test_legendre(1, 1.0, 1.0);
         test_legendre(1, -1.0, -1.0);
-        test_legendre(1, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_legendre(1, qNaN, qNaN);
 
         test_legendre(2, 0.0, -0.5);
         test_legendre(2, 0.5, -0.125);
         test_legendre(2, -0.5, -0.125);
         test_legendre(2, 1.0, 1.0);
         test_legendre(2, -1.0, 1.0);
-        test_legendre(2, numeric_limits<double>::quiet_NaN(), numeric_limits<double>::quiet_NaN());
+        test_legendre(2, qNaN, qNaN);
 
         try {
             test_beta(0.0, 0.0, 0.0);
