@@ -8,6 +8,14 @@ Think about two approaches:
 
 Is there a spectrum?
 
+For most error cases, the functions throw `std::domain_error`. There are, however, cases that throw something else:
+* `std::overflow_error`
+* `std::underflow_error`
+* `boost::math::rounding_error`
+* `boost::math::evaluation_error`
+I need to determine which if any of these need to be either remapped before propagating into user code, or if its possible to use a custom Policy to do so.
+
+
 ### [Associated Laguerre polynomials [sf.cmath.assoc_laguerre]](http://eel.is/c++draft/sf.cmath.laguerre)
 
 ```c++

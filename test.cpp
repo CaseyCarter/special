@@ -24,6 +24,7 @@ namespace {
     constexpr T narrow_cast(U const u) noexcept {
         auto const result = static_cast<T>(u);
         CHECK(C(result) == C(u)); // FIXME: cascade.
+        CHECK(is_signed_v<T> == is_signed_v<U> || result > T{} == u > U{}); // FIXME: cascade.
         return result;
     }
 
