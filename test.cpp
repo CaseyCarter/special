@@ -10,7 +10,10 @@ using namespace std;
 
 namespace {
     template<class T>
-    constexpr T epsilon = static_cast<T>(1e-15);
+    constexpr T epsilon = static_cast<T>(1e-2);
+    template<class T>
+    constexpr T small = epsilon<T> / 1024;
+    constexpr auto qNaN = numeric_limits<double>::quiet_NaN();
 
     int status = 0;
 
@@ -28,7 +31,7 @@ namespace {
     template<class T, class... Args>
     void test(T const expected, T const actual, char const * const name, Args... args) {
         if (isnan(expected) == isnan(actual)) {
-            if (isnan(expected) || abs(expected - actual) < epsilon<T>) {
+            if (isnan(expected) || abs(expected - actual) < epsilon<T> * 20) {
                 return;
             }
         }
@@ -73,8 +76,6 @@ namespace {
             static_cast<long double>(dx), static_cast<long double>(dy), static_cast<long double>(dz));
     }
 }
-
-constexpr auto qNaN = numeric_limits<double>::quiet_NaN();
 
 int main() {
     try {
@@ -168,6 +169,11 @@ int main() {
 
         test_beta(1.0, qNaN, qNaN);
         test_beta(qNaN, 1.0, qNaN);
+
+        test_beta(1.0, 4.0, 0.25);
+        test_beta(small<double>, 4.0, 1/small<double>);
+        test_beta(4.0, 20.0, 0.00002823263692828910220214568040654997176736);
+        test_beta(0.0125, 0.000023, 43558.24045647538375006349016083320744662);
 
         test_legendre(0, 0.0, 1.0);
         test_legendre(0, 0.5, 1.0);

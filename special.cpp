@@ -32,6 +32,9 @@ namespace std {
     double beta(double x, double y) {
         return boost_call([=]{ return boost::math::beta(x, y); });
     }
+    float betaf(float x, float y) {
+        return boost_call([=]{ return boost::math::beta(x, y); });
+    }
 
     double legendre(unsigned l, double x) {
         if (std::isnan(x)) return x;
@@ -46,6 +49,7 @@ namespace std {
             case FP_NAN:
             case FP_INFINITE:
                 std::abort();
+                // "fallthrough" but not really
             default:
                 return std::abs(value);
             }
