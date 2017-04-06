@@ -5,14 +5,11 @@
 #include <iostream>
 #include <limits>
 #include <type_traits>
+#include <boost/math/tools/precision.hpp>
 
 using namespace std;
 
 namespace {
-    template<class T>
-    constexpr T epsilon = static_cast<T>(1e-2);
-    template<class T>
-    constexpr T small = epsilon<T> / 1024;
     constexpr auto qNaN = numeric_limits<double>::quiet_NaN();
 
     int status = 0;
@@ -21,6 +18,7 @@ namespace {
     void log_failure(T const expected, T const actual, char const * const name,
         std::index_sequence<Is...>, First&& first, Args&&... args)
     {
+        cerr.precision(12);
         cerr << "Check failed: " << name << '(' << first;
         int unused[] = {0, ((cerr << ", " << args), 0)...};
         (void)unused;
@@ -30,8 +28,14 @@ namespace {
 
     template<class T, class... Args>
     void test(T const expected, T const actual, char const * const name, Args... args) {
-        if (isnan(expected) == isnan(actual)) {
-            if (isnan(expected) || abs(expected - actual) < epsilon<T> * 20) {
+        if (isnan(expected)) {
+            if (isnan(actual)) {
+                return;
+            }
+        } else if (!isnan(actual)) {
+            auto const absolute_error = expected - actual;
+            auto const relative_error = abs(absolute_error / (expected ? expected : 1.0));
+            if (relative_error < 1e-6) {
                 return;
             }
         }
@@ -171,7 +175,10 @@ int main() {
         test_beta(qNaN, 1.0, qNaN);
 
         test_beta(1.0, 4.0, 0.25);
-        test_beta(small<double>, 4.0, 1/small<double>);
+        {
+            const auto small = boost::math::tools::epsilon<double>() / 1024;
+            test_beta(small, 4.0, 1/small);
+        }
         test_beta(4.0, 20.0, 0.00002823263692828910220214568040654997176736);
         test_beta(0.0125, 0.000023, 43558.24045647538375006349016083320744662);
 

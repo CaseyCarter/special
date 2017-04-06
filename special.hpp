@@ -35,7 +35,10 @@ _Check_return_ inline long double legendrel(_In_ unsigned _Degree, _In_ long dou
 	}
 
 _Check_return_ double beta(_In_ double _Arg1, _In_ double _Arg2);
-_Check_return_ float betaf(_In_ float _Arg1, _In_ float _Arg2);
+_Check_return_ inline float betaf(_In_ float _Arg1, _In_ float _Arg2)
+	{
+	return (static_cast<float>(_STD beta(static_cast<double>(_Arg1), static_cast<double>(_Arg2)))); // narrowing
+	}
 _Check_return_ inline long double betal(_In_ long double _Arg1, _In_ long double _Arg2)
 	{
 	return (_STD beta(static_cast<double>(_Arg1), static_cast<double>(_Arg2)));
