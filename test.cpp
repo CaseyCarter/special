@@ -1,11 +1,10 @@
-#include "special.hpp"
-
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
 #include <limits>
 #include <type_traits>
 #include <boost/math/tools/precision.hpp>
+#include <special.hpp>
 
 using namespace std;
 

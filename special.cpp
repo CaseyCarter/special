@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <utility>
 #include <boost/math/special_functions.hpp>
-#include "special.hpp"
+#include <special.hpp>
 
 namespace {
     template<class F>
