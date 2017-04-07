@@ -25,7 +25,7 @@ namespace {
 
     template<class T>
     constexpr T relative_error(T const actual, T const expected) {
-        return std::abs(actual / (expected ? expected : 1e-12) - 1);
+        return static_cast<T>(std::abs(actual / (expected ? expected : 1e-12) - 1));
     }
 
     template<class T, class First, class... Args, size_t... Is>
@@ -77,10 +77,8 @@ namespace {
             test_beta_single(f, datum[0], datum[1], datum[2], 1e-12);
         }
 
-        if (false) {
-            for(auto& datum : beta_exp_data) {
-                test_beta_single(f, datum[0], datum[1], datum[2], 1e-12);
-            }
+        for(auto& datum : beta_exp_data) {
+            test_beta_single(f, datum[0], datum[1], datum[2], 1e-12);
         }
     }
 } // unnamed namespace
