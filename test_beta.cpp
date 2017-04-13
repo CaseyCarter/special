@@ -8,15 +8,6 @@ namespace {
     int status = 0;
 
     template<class>
-    constexpr const char *name = nullptr;
-    template<>
-    constexpr const char *name<double> = "double";
-    template<>
-    constexpr const char *name<long double> = "long double";
-    template<>
-    constexpr const char *name<float> = "float";
-
-    template<class>
     constexpr const char *suffix = "";
     template<>
     constexpr const char *suffix<long double> = "l";
@@ -25,7 +16,10 @@ namespace {
 
     template<class T>
     constexpr T relative_error(T const actual, T const expected) {
-        return static_cast<T>(std::abs(actual / (expected ? expected : 1e-12) - 1));
+        if (expected)
+            return static_cast<T>(std::abs(actual / expected - 1));
+        else
+            return static_cast<T>(std::abs(actual * 1e15));
     }
 
     template<class T, class First, class... Args, size_t... Is>
@@ -72,13 +66,11 @@ namespace {
         for(auto& datum : beta_small_data) {
             test_beta_single(f, datum[0], datum[1], datum[2], 1e-15);
         }
-
         for(auto& datum : beta_med_data) {
-            test_beta_single(f, datum[0], datum[1], datum[2], 1e-12);
+            test_beta_single(f, datum[0], datum[1], datum[2], 1e-13);
         }
-
         for(auto& datum : beta_exp_data) {
-            test_beta_single(f, datum[0], datum[1], datum[2], 1e-12);
+            test_beta_single(f, datum[0], datum[1], datum[2], 1e-14);
         }
     }
 } // unnamed namespace
