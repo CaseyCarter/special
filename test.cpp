@@ -9,6 +9,7 @@
 using namespace std;
 
 namespace {
+    constexpr auto inf = numeric_limits<double>::infinity();
     constexpr auto qNaN = numeric_limits<double>::quiet_NaN();
 
     int status = 0;
@@ -27,6 +28,11 @@ namespace {
 
     template<class T, class... Args>
     void test(T const expected, T const actual, char const * const name, Args... args) {
+        if (isinf(expected)) {
+            if (isinf(actual)) {
+                return;
+            }
+        }
         if (isnan(expected)) {
             if (isnan(actual)) {
                 return;
@@ -73,6 +79,11 @@ namespace {
 
     void test_hypot(double dx, double dy, double dz, double result) {
         TEST(hypot, result, dx, dy, dz);
+        TEST(hypot, result, dx, dz, dy);
+        TEST(hypot, result, dz, dx, dy);
+        TEST(hypot, result, dz, dy, dx);
+        TEST(hypot, result, dy, dz, dx);
+        TEST(hypot, result, dy, dx, dz);
         TEST(hypot, static_cast<float>(result),
             static_cast<float>(dx), static_cast<float>(dy), static_cast<float>(dz));
         TEST(hypot, static_cast<long double>(result),
@@ -84,8 +95,10 @@ int main() {
     try {
         test_hypot(0.0, 0.0, 0.0, 0.0);
         test_hypot(1.0, 0.0, 0.0, 1.0);
-        test_hypot(0.0, 1.0, 0.0, 1.0);
-        test_hypot(0.0, 0.0, 1.0, 1.0);
+        test_hypot(inf, 0.0, 1.0, inf);
+        test_hypot(-inf, 0.0, 1.0, inf);
+        test_hypot(inf, qNaN, 1.0, inf);
+        test_hypot(-inf, qNaN, 1.0, inf);
 
         test_assoc_laguerre(0, 0, 0.0, 1.0);
         test_assoc_laguerre(0, 0, 0.5, 1.0);
