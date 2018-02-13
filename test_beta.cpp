@@ -58,9 +58,9 @@ namespace {
     template<class T, class F>
     void test_beta(F f) {
 #define SC_(X) static_cast<T>(BOOST_JOIN(X, L))
-#include "beta_small_data.ipp"
-#include "beta_med_data.ipp"
-#include "beta_exp_data.ipp"
+#include "boostmath/libs/math/test/beta_small_data.ipp"
+#include "boostmath/libs/math/test/beta_med_data.ipp"
+#include "boostmath/libs/math/test/beta_exp_data.ipp"
 #undef SC_
 
         for(auto& datum : beta_small_data) {

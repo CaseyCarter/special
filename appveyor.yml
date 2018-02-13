@@ -10,7 +10,7 @@ configuration:
 
 image:
   - Visual Studio 2015
-#  - Visual Studio 2017
+  - Visual Studio 2017
 
 environment:
   BOOST_ROOT: C:\Libraries\boost_1_63_0

@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <limits>
+#include <type_traits>
 #include <utility>
 #include <boost/math/tools/config.hpp>
 #include <boost/math/tools/precision.hpp>
@@ -10,6 +11,7 @@
 template<class T> inline
 T _Hypot3(T dx, T dy, T dz) _NOEXCEPT
 {
+    static_assert(std::is_floating_point_v<T>);
     dx = std::abs(dx);
     dy = std::abs(dy);
     dz = std::abs(dz);
