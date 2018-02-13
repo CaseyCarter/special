@@ -34,9 +34,8 @@ _NODISCARD inline long double betal(long double _Arg1, long double _Arg2)
 
 _NODISCARD double hypot(double _Dx, double _Dy, double _Dz) _NOEXCEPT;
 _NODISCARD float hypot(float const _Dx, float const _Dy, float const _Dz) _NOEXCEPT;
-_NODISCARD inline long double hypot(long double const _Dx,
-									long double const _Dy,
-									long double const _Dz) _NOEXCEPT
+_NODISCARD inline long double hypot(long double const _Dx, long double const _Dy,
+	long double const _Dz) _NOEXCEPT
 	{
 	return (hypot(static_cast<double>(_Dx), static_cast<double>(_Dy), static_cast<double>(_Dz)));
 	}

@@ -12,6 +12,7 @@ add_library(smf
     beta.cpp betaf.cpp
     hypot3.cpp hypot3f.cpp
     legendre.cpp legendref.cpp)
+target_compile_definitions(smf PUBLIC BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE)
 target_include_directories(smf PRIVATE ${Boost_INCLUDE_DIR})
 target_include_directories(smf PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
