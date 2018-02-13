@@ -1,12 +1,6 @@
 ## [Special math functions [sf.cmath]](http://eel.is/c++draft/sf.cmath)
 
-Think about two approaches:
-
-* pure binary for WCFB02
-
-* header-only for WCFB01
-
-Is there a spectrum?
+* Figure out how to use bcp to extract boost.math
 
 For most error cases, the functions throw `std::domain_error`. There are, however, cases that throw something else:
 * `std::overflow_error`
