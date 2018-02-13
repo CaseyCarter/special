@@ -5,12 +5,9 @@
 #include <utility>
 #include <boost/math/tools/config.hpp>
 #include <boost/math/tools/precision.hpp>
-#include <boost/math/policies/error_handling.hpp>
-#include <boost/math/special_functions/math_fwd.hpp>
-//#include <boost/config/no_tr1/cmath.hpp>
 #include "special_internal.hpp"
 
-template<class T>
+template<class T> inline
 T _Hypot3(T dx, T dy, T dz) _NOEXCEPT
 {
     dx = std::abs(dx);
