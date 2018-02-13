@@ -1,4 +1,4 @@
-#include <special.hpp>
+#include "special.hpp"
 #include "special_internal.hpp"
 
 double std::beta(double x, double y) {

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <limits>
 #include <boost/array.hpp>
-#include <special.hpp>
+#include "special.hpp"
 
 namespace {
     int status = 0;
