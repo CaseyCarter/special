@@ -2,6 +2,11 @@
 
 #include <cmath>
 
+// For AppVeyor
+#ifndef _NODISCARD
+#define _NODISCARD
+#endif
+
 #if _HAS_CXX17
 _STD_BEGIN
 
