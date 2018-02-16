@@ -163,6 +163,13 @@ int main() {
         test_assoc_legendre(2, 0, -1.0, 1.0);
         test_assoc_legendre(2, 0, qNaN, qNaN);
 
+        test_assoc_legendre(2, 2, 0.0, 3.0);
+        test_assoc_legendre(2, 2, 0.5, 2.25);
+        test_assoc_legendre(2, 2, -0.5, 2.25);
+        test_assoc_legendre(2, 2, 1.0, 0.0);
+        test_assoc_legendre(2, 2, -1.0, 0.0);
+        test_assoc_legendre(2, 2, qNaN, qNaN);
+
         test_beta(1.0, 1.0, 1.0/1);
         test_beta(1.0, 2.0, 1.0/2);
         test_beta(1.0, 3.0, 1.0/3);
