@@ -77,10 +77,22 @@ namespace {
         TEST(comp_ellint_1l, static_cast<long double>(result), static_cast<long double>(x));
     }
 
+    void test_comp_ellint_2(double const x, double const result) {
+        TEST(comp_ellint_2,  result, x);
+        TEST(comp_ellint_2f, static_cast<float>(result), static_cast<float>(x));
+        TEST(comp_ellint_2l, static_cast<long double>(result), static_cast<long double>(x));
+    }
+
     void test_ellint_1(double const k, double phi, double const result) {
         TEST(ellint_1,  result, k, phi);
         TEST(ellint_1f, static_cast<float>(result), static_cast<float>(k), static_cast<float>(phi));
         TEST(ellint_1l, static_cast<long double>(result), static_cast<long double>(k), static_cast<float>(phi));
+    }
+
+    void test_ellint_2(double const k, double phi, double const result) {
+        TEST(ellint_2,  result, k, phi);
+        TEST(ellint_2f, static_cast<float>(result), static_cast<float>(k), static_cast<float>(phi));
+        TEST(ellint_2l, static_cast<long double>(result), static_cast<long double>(k), static_cast<float>(phi));
     }
 
     void test_legendre(unsigned const l, double const x, double const result) {
@@ -102,6 +114,8 @@ namespace {
             static_cast<long double>(dx), static_cast<long double>(dy), static_cast<long double>(dz));
     }
 }
+
+constexpr double half_pi = 1.57079632679;
 
 int main() {
     try {
@@ -218,18 +232,18 @@ int main() {
             status = 1;
         } catch(std::domain_error const&) {}
 
-        test_comp_ellint_1(0.0, 1.57079632679);
+        test_comp_ellint_1(0.0, half_pi);
         test_comp_ellint_1(0.5, 1.68575);
         test_comp_ellint_1(-0.5, 1.68575);
         test_comp_ellint_1(qNaN, qNaN);
 
-        test_ellint_1(0.0, 1.57079632679, 1.57079632679);
-        test_ellint_1(0.0, -1.57079632679, -1.57079632679);
-        test_ellint_1(0.5, 1.57079632679, 1.68575);
-        test_ellint_1(-0.5, 1.57079632679, 1.68575);
-        test_ellint_1(0.7, 0.0, 0.0);
-        test_ellint_1(qNaN, 1.57079632679, qNaN);
-        test_ellint_1(0, qNaN, qNaN);
+        test_comp_ellint_2(0.0, half_pi);
+        test_comp_ellint_2(1.0, 1.0);
+        test_comp_ellint_2(qNaN, qNaN);
+
+        test_ellint_2(0.0, half_pi, half_pi);
+        test_ellint_2(qNaN, half_pi, qNaN);
+        test_ellint_2(0, qNaN, qNaN);
 
         test_legendre(0, 0.0, 1.0);
         test_legendre(0, 0.5, 1.0);
