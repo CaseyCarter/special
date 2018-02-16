@@ -71,6 +71,18 @@ namespace {
         TEST(betal, static_cast<long double>(result), static_cast<long double>(y), static_cast<long double>(x));
     }
 
+    void test_comp_ellint_1(double const x, double const result) {
+        TEST(comp_ellint_1,  result, x);
+        TEST(comp_ellint_1f, static_cast<float>(result), static_cast<float>(x));
+        TEST(comp_ellint_1l, static_cast<long double>(result), static_cast<long double>(x));
+    }
+
+    void test_ellint_1(double const k, double phi, double const result) {
+        TEST(ellint_1,  result, k, phi);
+        TEST(ellint_1f, static_cast<float>(result), static_cast<float>(k), static_cast<float>(phi));
+        TEST(ellint_1l, static_cast<long double>(result), static_cast<long double>(k), static_cast<float>(phi));
+    }
+
     void test_legendre(unsigned const l, double const x, double const result) {
         TEST(legendre,  result, l, x);
         TEST(legendref, static_cast<float>(result), l, static_cast<float>(x));
@@ -200,6 +212,24 @@ int main() {
         }
         test_beta(4.0, 20.0, 0.00002823263692828910220214568040654997176736);
         test_beta(0.0125, 0.000023, 43558.24045647538375006349016083320744662);
+        try {
+            test_beta(0.0, 0.0, 0.0);
+            std::cerr << "Expected exception\n";
+            status = 1;
+        } catch(std::domain_error const&) {}
+
+        test_comp_ellint_1(0.0, 1.57079632679);
+        test_comp_ellint_1(0.5, 1.68575);
+        test_comp_ellint_1(-0.5, 1.68575);
+        test_comp_ellint_1(qNaN, qNaN);
+
+        test_ellint_1(0.0, 1.57079632679, 1.57079632679);
+        test_ellint_1(0.0, -1.57079632679, -1.57079632679);
+        test_ellint_1(0.5, 1.57079632679, 1.68575);
+        test_ellint_1(-0.5, 1.57079632679, 1.68575);
+        test_ellint_1(0.7, 0.0, 0.0);
+        test_ellint_1(qNaN, 1.57079632679, qNaN);
+        test_ellint_1(0, qNaN, qNaN);
 
         test_legendre(0, 0.0, 1.0);
         test_legendre(0, 0.5, 1.0);
@@ -221,14 +251,8 @@ int main() {
         test_legendre(2, 1.0, 1.0);
         test_legendre(2, -1.0, 1.0);
         test_legendre(2, qNaN, qNaN);
-
-        try {
-            test_beta(0.0, 0.0, 0.0);
-            std::cerr << "Expected exception\n";
-            status = 1;
-        } catch(std::domain_error const&) {}
     } catch(...) {
-        std::cerr << "Accepted unexpected exception\n";
+        std::cerr << "Caught unexpected exception\n";
         status = 1;
     }
 
