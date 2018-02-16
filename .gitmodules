@@ -1,0 +1,69 @@
+[submodule "array"]
+	path = array
+	url = ./array
+[submodule "assert"]
+	path = assert
+	url = ./assert
+[submodule "concept_check"]
+	path = concept_check
+	url = ./concept_check
+[submodule "config"]
+	path = config
+	url = ./config
+[submodule "container"]
+	path = container
+	url = ./container
+[submodule "core"]
+	path = core
+	url = ./core
+[submodule "detail"]
+	path = detail
+	url = ./detail
+[submodule "functional"]
+	path = functional
+	url = ./functional
+[submodule "integer"]
+	path = integer
+	url = ./integer
+[submodule "iterator"]
+	path = iterator
+	url = ./iterator
+[submodule "lexical_cast"]
+	path = lexical_cast
+	url = ./lexical_cast
+[submodule "math"]
+	path = math
+	url = ./math
+[submodule "move"]
+	path = move
+	url = ./move
+[submodule "mpl"]
+	path = mpl
+	url = ./mpl
+[submodule "numeric_conversion"]
+	path = numeric_conversion
+	url = ./numeric_conversion
+[submodule "predef"]
+	path = predef
+	url = ./predef
+[submodule "preprocessor"]
+	path = preprocessor
+	url = ./preprocessor
+[submodule "range"]
+	path = range
+	url = ./range
+[submodule "smart_ptr"]
+	path = smart_ptr
+	url = ./smart_ptr
+[submodule "static_assert"]
+	path = static_assert
+	url = ./static_assert
+[submodule "throw_exception"]
+	path = throw_exception
+	url = ./throw_exception
+[submodule "type_traits"]
+	path = type_traits
+	url = ./type_traits
+[submodule "utility"]
+	path = utility
+	url = ./utility

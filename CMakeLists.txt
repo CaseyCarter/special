@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.0)
 project(special CXX)
 
 add_library(boost INTERFACE)
-target_include_directories(boost INTERFACE boostmath)
+target_include_directories(boost INTERFACE array/include assert/include concept_check/include config/include container/include core/include detail/include functional/include integer/include iterator/include lexical_cast/include math/include move/include mpl/include numeric_conversion/include predef/include preprocessor/include range/include smart_ptr/include static_assert/include throw_exception/include type_traits/include utility/include)
 target_compile_definitions(boost INTERFACE BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE)
 
 enable_testing()
