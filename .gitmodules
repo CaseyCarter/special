@@ -1,69 +1,92 @@
 [submodule "array"]
 	path = array
-	url = ./array
+	url = https://github.com/boostorg/array
+	shallow = true
 [submodule "assert"]
 	path = assert
-	url = ./assert
+	url = https://github.com/boostorg/assert
+	shallow = true
 [submodule "concept_check"]
 	path = concept_check
-	url = ./concept_check
+	url = https://github.com/boostorg/concept_check
+	shallow = true
 [submodule "config"]
 	path = config
-	url = ./config
+	url = https://github.com/boostorg/config
+	shallow = true
 [submodule "container"]
 	path = container
-	url = ./container
+	url = https://github.com/boostorg/container
+	shallow = true
 [submodule "core"]
 	path = core
-	url = ./core
+	url = https://github.com/boostorg/core
+	shallow = true
 [submodule "detail"]
 	path = detail
-	url = ./detail
+	url = https://github.com/boostorg/detail
+	shallow = true
 [submodule "functional"]
 	path = functional
-	url = ./functional
+	url = https://github.com/boostorg/functional
+	shallow = true
 [submodule "integer"]
 	path = integer
-	url = ./integer
+	url = https://github.com/boostorg/integer
+	shallow = true
 [submodule "iterator"]
 	path = iterator
-	url = ./iterator
+	url = https://github.com/boostorg/iterator
+	shallow = true
 [submodule "lexical_cast"]
 	path = lexical_cast
-	url = ./lexical_cast
+	url = https://github.com/boostorg/lexical_cast
+	shallow = true
 [submodule "math"]
 	path = math
-	url = ./math
+	url = https://github.com/boostorg/math
+	shallow = true
 [submodule "move"]
 	path = move
-	url = ./move
+	url = https://github.com/boostorg/move
+	shallow = true
 [submodule "mpl"]
 	path = mpl
-	url = ./mpl
+	url = https://github.com/boostorg/mpl
+	shallow = true
 [submodule "numeric_conversion"]
 	path = numeric_conversion
-	url = ./numeric_conversion
+	url = https://github.com/boostorg/numeric_conversion
+	shallow = true
 [submodule "predef"]
 	path = predef
-	url = ./predef
+	url = https://github.com/boostorg/predef
+	shallow = true
 [submodule "preprocessor"]
 	path = preprocessor
-	url = ./preprocessor
+	url = https://github.com/boostorg/preprocessor
+	shallow = true
 [submodule "range"]
 	path = range
-	url = ./range
+	url = https://github.com/boostorg/range
+	shallow = true
 [submodule "smart_ptr"]
 	path = smart_ptr
-	url = ./smart_ptr
+	url = https://github.com/boostorg/smart_ptr
+	shallow = true
 [submodule "static_assert"]
 	path = static_assert
-	url = ./static_assert
+	url = https://github.com/boostorg/static_assert
+	shallow = true
 [submodule "throw_exception"]
 	path = throw_exception
-	url = ./throw_exception
+	url = https://github.com/boostorg/throw_exception
+	shallow = true
 [submodule "type_traits"]
 	path = type_traits
-	url = ./type_traits
+	url = https://github.com/boostorg/type_traits
+	shallow = true
 [submodule "utility"]
 	path = utility
-	url = ./utility
+	url = https://github.com/boostorg/utility
+	shallow = true
