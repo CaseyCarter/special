@@ -20,8 +20,10 @@ add_library(smf
     beta.cpp betaf.cpp
     comp_ellint1.cpp comp_ellint1f.cpp
     comp_ellint2.cpp comp_ellint2f.cpp
+    comp_ellint3.cpp comp_ellint3f.cpp
     ellint1.cpp ellint1f.cpp
     ellint2.cpp ellint2f.cpp
+    ellint3.cpp ellint3f.cpp
     hypot3.cpp hypot3f.cpp
     legendre.cpp legendref.cpp)
 target_link_libraries(smf PRIVATE boost)

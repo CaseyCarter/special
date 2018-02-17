@@ -1,3 +1,5 @@
+#define _USE_MATH_DEFINES
+
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
@@ -83,16 +85,28 @@ namespace {
         TEST(comp_ellint_2l, static_cast<long double>(result), static_cast<long double>(x));
     }
 
-    void test_ellint_1(double const k, double phi, double const result) {
+    void test_comp_ellint_3(double const k, double const nu, double const result) {
+        TEST(comp_ellint_3,  result, k, nu);
+        TEST(comp_ellint_3f, static_cast<float>(result), static_cast<float>(k), static_cast<float>(nu));
+        TEST(comp_ellint_3l, static_cast<long double>(result), static_cast<long double>(k), static_cast<long double>(nu));
+    }
+
+    void test_ellint_1(double const k, double const phi, double const result) {
         TEST(ellint_1,  result, k, phi);
         TEST(ellint_1f, static_cast<float>(result), static_cast<float>(k), static_cast<float>(phi));
         TEST(ellint_1l, static_cast<long double>(result), static_cast<long double>(k), static_cast<float>(phi));
     }
 
-    void test_ellint_2(double const k, double phi, double const result) {
+    void test_ellint_2(double const k, double const phi, double const result) {
         TEST(ellint_2,  result, k, phi);
         TEST(ellint_2f, static_cast<float>(result), static_cast<float>(k), static_cast<float>(phi));
         TEST(ellint_2l, static_cast<long double>(result), static_cast<long double>(k), static_cast<float>(phi));
+    }
+
+    void test_ellint_3(double const k, double const nu, double const phi, double const result) {
+        TEST(ellint_3,  result, k, nu, phi);
+        TEST(ellint_3f, static_cast<float>(result), static_cast<float>(k), static_cast<float>(nu), static_cast<float>(phi));
+        TEST(ellint_3l, static_cast<long double>(result), static_cast<long double>(k), static_cast<float>(nu), static_cast<float>(phi));
     }
 
     void test_legendre(unsigned const l, double const x, double const result) {
@@ -115,85 +129,76 @@ namespace {
     }
 }
 
-constexpr double half_pi = 1.57079632679;
-
 int main() {
     try {
-        test_hypot(0.0, 0.0, 0.0, 0.0);
-        test_hypot(1.0, 0.0, 0.0, 1.0);
-        test_hypot(inf, 0.0, 1.0, inf);
-        test_hypot(-inf, 0.0, 1.0, inf);
-        test_hypot(inf, qNaN, 1.0, inf);
-        test_hypot(-inf, qNaN, 1.0, inf);
-
-        test_assoc_laguerre(0, 0, 0.0, 1.0);
-        test_assoc_laguerre(0, 0, 0.5, 1.0);
-        test_assoc_laguerre(0, 0, -0.5, 1.0);
-        test_assoc_laguerre(0, 0, 1.0, 1.0);
-        test_assoc_laguerre(0, 0, -1.0, 1.0);
+        test_assoc_laguerre(0, 0,  0.0,  1.0);
+        test_assoc_laguerre(0, 0,  0.5,  1.0);
+        test_assoc_laguerre(0, 0, -0.5,  1.0);
+        test_assoc_laguerre(0, 0,  1.0,  1.0);
+        test_assoc_laguerre(0, 0, -1.0,  1.0);
         test_assoc_laguerre(0, 0, qNaN, qNaN);
 
-        test_assoc_laguerre(0, 1, 0.0, 1.0);
-        test_assoc_laguerre(0, 1, 0.5, 1.0);
-        test_assoc_laguerre(0, 1, -0.5, 1.0);
-        test_assoc_laguerre(0, 1, 1.0, 1.0);
-        test_assoc_laguerre(0, 1, -1.0, 1.0);
+        test_assoc_laguerre(0, 1,  0.0,  1.0);
+        test_assoc_laguerre(0, 1,  0.5,  1.0);
+        test_assoc_laguerre(0, 1, -0.5,  1.0);
+        test_assoc_laguerre(0, 1,  1.0,  1.0);
+        test_assoc_laguerre(0, 1, -1.0,  1.0);
         test_assoc_laguerre(0, 1, qNaN, qNaN);
 
-        test_assoc_laguerre(1, 0, 0.0, 1.0);
-        test_assoc_laguerre(1, 0, 0.5, 0.5);
-        test_assoc_laguerre(1, 0, -0.5, 1.5);
-        test_assoc_laguerre(1, 0, 1.0, 0.0);
-        test_assoc_laguerre(1, 0, -1.0, 2.0);
+        test_assoc_laguerre(1, 0,  0.0,  1.0);
+        test_assoc_laguerre(1, 0,  0.5,  0.5);
+        test_assoc_laguerre(1, 0, -0.5,  1.5);
+        test_assoc_laguerre(1, 0,  1.0,  0.0);
+        test_assoc_laguerre(1, 0, -1.0,  2.0);
         test_assoc_laguerre(1, 0, qNaN, qNaN);
 
-        test_assoc_laguerre(1, 1, 0.0, 2.0);
-        test_assoc_laguerre(1, 1, 0.5, 1.5);
-        test_assoc_laguerre(1, 1, -0.5, 2.5);
-        test_assoc_laguerre(1, 1, 1.0, 1.0);
-        test_assoc_laguerre(1, 1, -1.0, 3.0);
+        test_assoc_laguerre(1, 1,  0.0,  2.0);
+        test_assoc_laguerre(1, 1,  0.5,  1.5);
+        test_assoc_laguerre(1, 1, -0.5,  2.5);
+        test_assoc_laguerre(1, 1,  1.0,  1.0);
+        test_assoc_laguerre(1, 1, -1.0,  3.0);
         test_assoc_laguerre(1, 1, qNaN, qNaN);
 
-        test_assoc_laguerre(2, 0, 0.0, 1.0);
-        test_assoc_laguerre(2, 0, 0.5, 0.125);
+        test_assoc_laguerre(2, 0,  0.0,   1.0);
+        test_assoc_laguerre(2, 0,  0.5, 0.125);
         test_assoc_laguerre(2, 0, -0.5, 2.125);
-        test_assoc_laguerre(2, 0, 1.0, -0.5);
-        test_assoc_laguerre(2, 0, -1.0, 3.5);
-        test_assoc_laguerre(2, 0, qNaN, qNaN);
+        test_assoc_laguerre(2, 0,  1.0,  -0.5);
+        test_assoc_laguerre(2, 0, -1.0,   3.5);
+        test_assoc_laguerre(2, 0, qNaN,  qNaN);
 
-        test_assoc_legendre(0, 0, 0.0, 1.0);
-        test_assoc_legendre(0, 0, 0.5, 1.0);
-        test_assoc_legendre(0, 0, -0.5, 1.0);
-        test_assoc_legendre(0, 0, 1.0, 1.0);
-        test_assoc_legendre(0, 0, -1.0, 1.0);
+        test_assoc_legendre(0, 0,  0.0,  1.0);
+        test_assoc_legendre(0, 0,  0.5,  1.0);
+        test_assoc_legendre(0, 0, -0.5,  1.0);
+        test_assoc_legendre(0, 0,  1.0,  1.0);
+        test_assoc_legendre(0, 0, -1.0,  1.0);
         test_assoc_legendre(0, 0, qNaN, qNaN);
 
-        test_assoc_legendre(1, 0, 0.0, 0.0);
-        test_assoc_legendre(1, 0, 0.5, 0.5);
+        test_assoc_legendre(1, 0,  0.0,  0.0);
+        test_assoc_legendre(1, 0,  0.5,  0.5);
         test_assoc_legendre(1, 0, -0.5, -0.5);
-        test_assoc_legendre(1, 0, 1.0, 1.0);
+        test_assoc_legendre(1, 0,  1.0 , 1.0);
         test_assoc_legendre(1, 0, -1.0, -1.0);
         test_assoc_legendre(1, 0, qNaN, qNaN);
 
-        test_assoc_legendre(1, 1, 0.0, -1.0);
-        test_assoc_legendre(1, 1, 0.5, -sqrt(3) / 2);
+        test_assoc_legendre(1, 1,  0.0,         -1.0);
+        test_assoc_legendre(1, 1,  0.5, -sqrt(3) / 2);
         test_assoc_legendre(1, 1, -0.5, -sqrt(3) / 2);
-        test_assoc_legendre(1, 1, 1.0, 0.0);
-        test_assoc_legendre(1, 1, -1.0, 0.0);
-        test_assoc_legendre(1, 1, qNaN, qNaN);
+        test_assoc_legendre(1, 1,  1.0,          0.0);
+        test_assoc_legendre(1, 1, -1.0,          0.0);
+        test_assoc_legendre(1, 1, qNaN,         qNaN);
 
-        test_assoc_legendre(2, 0, 0.0, -0.5);
-        test_assoc_legendre(2, 0, 0.5, -0.125);
+        test_assoc_legendre(2, 0,  0.0,   -0.5);
+        test_assoc_legendre(2, 0,  0.5, -0.125);
         test_assoc_legendre(2, 0, -0.5, -0.125);
-        test_assoc_legendre(2, 0, 1.0, 1.0);
-        test_assoc_legendre(2, 0, -1.0, 1.0);
-        test_assoc_legendre(2, 0, qNaN, qNaN);
+        test_assoc_legendre(2, 0,  1.0,    1.0);
+        test_assoc_legendre(2, 0, -1.0,    1.0);
+        test_assoc_legendre(2, 0, qNaN,   qNaN);
 
-        test_assoc_legendre(2, 2, 0.0, 3.0);
-        test_assoc_legendre(2, 2, 0.5, 2.25);
+        test_assoc_legendre(2, 2,  0.0,  3.0);
+        test_assoc_legendre(2, 2,  0.5, 2.25);
         test_assoc_legendre(2, 2, -0.5, 2.25);
-        test_assoc_legendre(2, 2, 1.0, 0.0);
-        test_assoc_legendre(2, 2, -1.0, 0.0);
+        test_assoc_legendre(2, 2,  1.0,  0.0);
+        test_assoc_legendre(2, 2, -1.0,  0.0);
         test_assoc_legendre(2, 2, qNaN, qNaN);
 
         test_beta(1.0, 1.0, 1.0/1);
@@ -232,39 +237,71 @@ int main() {
             status = 1;
         } catch(std::domain_error const&) {}
 
-        test_comp_ellint_1(0.0, half_pi);
-        test_comp_ellint_1(0.5, 1.68575);
+        test_comp_ellint_1( 0.0,  M_PI_2);
+        test_comp_ellint_1( 0.5, 1.68575);
         test_comp_ellint_1(-0.5, 1.68575);
-        test_comp_ellint_1(qNaN, qNaN);
+        test_comp_ellint_1(qNaN,    qNaN);
 
-        test_comp_ellint_2(0.0, half_pi);
-        test_comp_ellint_2(1.0, 1.0);
-        test_comp_ellint_2(qNaN, qNaN);
+        test_comp_ellint_2( 0.0, M_PI_2);
+        test_comp_ellint_2( 1.0,    1.0);
+        test_comp_ellint_2(qNaN,   qNaN);
 
-        test_ellint_2(0.0, half_pi, half_pi);
-        test_ellint_2(qNaN, half_pi, qNaN);
-        test_ellint_2(0, qNaN, qNaN);
+        test_comp_ellint_3( 0.0,  0.0,  M_PI_2);
+        test_comp_ellint_3( 0.5,  0.0, 1.68575);
+        test_comp_ellint_3(qNaN,  0.0,    qNaN);
+        test_comp_ellint_3( 0.0, qNaN,    qNaN);
 
-        test_legendre(0, 0.0, 1.0);
-        test_legendre(0, 0.5, 1.0);
-        test_legendre(0, -0.5, 1.0);
-        test_legendre(0, 1.0, 1.0);
-        test_legendre(0, -1.0, 1.0);
+        test_ellint_1( 0.0,  M_PI_2,   M_PI_2);
+        test_ellint_1( 0.0, -M_PI_2,  -M_PI_2);
+        test_ellint_1( 0.5,  M_PI_2,  1.68575);
+        test_ellint_1(-0.5,  M_PI_2,  1.68575);
+        test_ellint_1(-0.5, -M_PI_2, -1.68575);
+        test_ellint_1( 0.7,       0,        0);
+        test_ellint_1(-0.7,       0,        0);
+        test_ellint_1(qNaN,  M_PI_2,     qNaN);
+        test_ellint_1( 0.0,    qNaN,     qNaN);
+
+        test_ellint_2( 0.0,  M_PI_2,  M_PI_2);
+        test_ellint_2( 0.0, -M_PI_2, -M_PI_2);
+        test_ellint_2( 0.7,     0.0,     0.0);
+        test_ellint_2(-0.7,     0.0,     0.0);
+        test_ellint_2( 1.0,  M_PI_2,     1.0);
+        test_ellint_2( 1.0, -M_PI_2,    -1.0);
+        test_ellint_2(qNaN,  M_PI_2,    qNaN);
+        test_ellint_2( 0.0,    qNaN,    qNaN);
+
+        test_ellint_3( 0.0,  0.0, M_PI_2,  M_PI_2);
+        test_ellint_3( 0.5,  0.0, M_PI_2, 1.68575);
+        test_ellint_3(qNaN,  0.0, M_PI_2,    qNaN);
+        test_ellint_3( 0.0, qNaN, M_PI_2,    qNaN);
+
+        test_hypot(0.0,   0.0, 0.0, 0.0);
+        test_hypot(1.0,   0.0, 0.0, 1.0);
+        test_hypot(+inf,  0.0, 1.0, inf);
+        test_hypot(-inf,  0.0, 1.0, inf);
+        test_hypot(+inf, qNaN, 1.0, inf); // C11 F.10.4.3: "hypot(+/-inf, y)
+        test_hypot(-inf, qNaN, 1.0, inf); // returns +inf even if y is NaN"
+
+        test_legendre(0,  0.0,  1.0);
+        test_legendre(0,  0.5,  1.0);
+        test_legendre(0, -0.5,  1.0);
+        test_legendre(0,  1.0,  1.0);
+        test_legendre(0, -1.0,  1.0);
         test_legendre(0, qNaN, qNaN);
 
-        test_legendre(1, 0.0, 0.0);
-        test_legendre(1, 0.5, 0.5);
+        test_legendre(1,  0.0,  0.0);
+        test_legendre(1,  0.5,  0.5);
         test_legendre(1, -0.5, -0.5);
-        test_legendre(1, 1.0, 1.0);
+        test_legendre(1,  1.0,  1.0);
         test_legendre(1, -1.0, -1.0);
         test_legendre(1, qNaN, qNaN);
 
-        test_legendre(2, 0.0, -0.5);
-        test_legendre(2, 0.5, -0.125);
+        test_legendre(2,  0.0,   -0.5);
+        test_legendre(2,  0.5, -0.125);
         test_legendre(2, -0.5, -0.125);
-        test_legendre(2, 1.0, 1.0);
-        test_legendre(2, -1.0, 1.0);
-        test_legendre(2, qNaN, qNaN);
+        test_legendre(2,  1.0,    1.0);
+        test_legendre(2, -1.0,    1.0);
+        test_legendre(2, qNaN,   qNaN);
     } catch(...) {
         std::cerr << "Caught unexpected exception\n";
         status = 1;
