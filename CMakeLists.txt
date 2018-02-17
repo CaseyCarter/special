@@ -21,6 +21,9 @@ add_library(smf
     comp_ellint1.cpp comp_ellint1f.cpp
     comp_ellint2.cpp comp_ellint2f.cpp
     comp_ellint3.cpp comp_ellint3f.cpp
+    cyl_bessel_i.cpp cyl_bessel_if.cpp
+    cyl_bessel_j.cpp cyl_bessel_jf.cpp
+    cyl_bessel_k.cpp cyl_bessel_kf.cpp
     ellint1.cpp ellint1f.cpp
     ellint2.cpp ellint2f.cpp
     ellint3.cpp ellint3f.cpp
