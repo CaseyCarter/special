@@ -16,6 +16,14 @@ namespace {
 
     int n_errors = 0;
 
+    void verify_domain_error() {
+        int const err = exchange(errno, 0);
+        if (err != EDOM) {
+            cerr << "Didn't receive expected domain error notification.\n";
+            ++n_errors;
+        }
+    }
+
     template<class T, class First, class... Args, size_t... Is>
     void log_failure(T const expected, T const actual, char const * const name,
         std::index_sequence<Is...>, First&& first, Args&&... args)
@@ -231,11 +239,9 @@ int main() {
         }
         test_beta(4.0, 20.0, 0.00002823263692828910220214568040654997176736);
         test_beta(0.0125, 0.000023, 43558.24045647538375006349016083320744662);
-        try {
-            test_beta(0.0, 0.0, 0.0);
-            std::cerr << "Expected exception\n";
-            ++n_errors;
-        } catch(std::domain_error const&) {}
+        errno = 0;
+        test_beta(0.0, 0.0, qNaN);
+        verify_domain_error();
 
         test_comp_ellint_1( 0.0,  M_PI_2);
         test_comp_ellint_1( 0.5, 1.68575);

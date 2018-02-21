@@ -53,5 +53,5 @@ function(add_smf_test TESTNAME SOURCES...)
 endfunction(add_smf_test)
 
 add_smf_test(spot test.cpp)
-add_smf_test(test_beta test_beta.cpp)
+add_smf_test(test_special test_special.cpp)
 add_smf_test(test_laguerre test_laguerre.cpp)
