@@ -40,14 +40,8 @@ namespace {
     }
 } // unnamed namespace
 
-BOOST_AUTO_TEST_CASE(beta) {
-    test_beta<double>([](auto... args){ return std::beta(args...); });
-}
+BOOST_AUTO_TEST_CASE(beta) { test_beta<double>(std::beta); }
 
-BOOST_AUTO_TEST_CASE(betaf) {
-    test_beta<float>([](auto... args){ return std::betaf(args...); });
-}
+BOOST_AUTO_TEST_CASE(betaf) { test_beta<float>(std::betaf); }
 
-BOOST_AUTO_TEST_CASE(betal) {
-    test_beta<long double>([](auto... args){ return std::betal(args...); });
-}
+BOOST_AUTO_TEST_CASE(betal) { test_beta<long double>(std::betal); }
