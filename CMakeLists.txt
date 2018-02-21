@@ -12,7 +12,10 @@ target_include_directories(boost INTERFACE
     preprocessor/include range/include smart_ptr/include static_assert/include
     test/include throw_exception/include timer/include type_index/include
     type_traits/include utility/include)
-target_compile_definitions(boost INTERFACE BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE)
+target_compile_definitions(boost INTERFACE
+    BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE
+    BOOST_MATH_DOMAIN_ERROR_POLICY=errno_on_error
+    BOOST_MATH_OVERFLOW_ERROR_POLICY=errno_on_error)
 
 enable_testing()
 
@@ -41,9 +44,6 @@ add_library(smf
     sph_neumann.cpp sph_neumannf.cpp)
 target_link_libraries(smf PRIVATE boost)
 target_compile_options(smf PRIVATE /std:c++latest /WX)
-target_compile_definitions(smf PRIVATE
-    BOOST_MATH_DOMAIN_ERROR_POLICY=errno_on_error
-    BOOST_MATH_OVERFLOW_ERROR_POLICY=errno_on_error)
 
 function(add_smf_test TESTNAME SOURCES...)
   add_executable(${TESTNAME} ${SOURCES...})
