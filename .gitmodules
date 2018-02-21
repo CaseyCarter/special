@@ -90,3 +90,39 @@
 	path = utility
 	url = https://github.com/boostorg/utility
 	shallow = true
+[submodule "test"]
+	path = test
+	url = https://github.com/boostorg/test
+	shallow = true
+[submodule "function"]
+	path = function
+	url = https://github.com/boostorg/function
+	shallow = true
+[submodule "type_index"]
+	path = type_index
+	url = https://github.com/boostorg/type_index
+	shallow = true
+[submodule "container_hash"]
+	path = container_hash
+	url = https://github.com/boostorg/container_hash
+	shallow = true
+[submodule "bind"]
+	path = bind
+	url = https://github.com/boostorg/bind
+	shallow = true
+[submodule "timer"]
+	path = timer
+	url = https://github.com/boostorg/timer
+	shallow = true
+[submodule "exception"]
+	path = exception
+	url = https://github.com/boostorg/exception
+	shallow = true
+[submodule "io"]
+	path = io
+	url = https://github.com/boostorg/io
+	shallow = true
+[submodule "algorithm"]
+	path = algorithm
+	url = https://github.com/boostorg/algorithm
+	shallow = true

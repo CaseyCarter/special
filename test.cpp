@@ -14,7 +14,7 @@ namespace {
     constexpr auto inf = numeric_limits<double>::infinity();
     constexpr auto qNaN = numeric_limits<double>::quiet_NaN();
 
-    int status = 0;
+    int n_errors = 0;
 
     template<class T, class First, class... Args, size_t... Is>
     void log_failure(T const expected, T const actual, char const * const name,
@@ -25,7 +25,7 @@ namespace {
         int unused[] = {0, ((cerr << ", " << args), 0)...};
         (void)unused;
         cerr << "): Actual: " << actual << ", Expected: " << expected << "\n\n";
-        status = 1;
+        ++n_errors;
     }
 
     template<class T, class... Args>
@@ -234,7 +234,7 @@ int main() {
         try {
             test_beta(0.0, 0.0, 0.0);
             std::cerr << "Expected exception\n";
-            status = 1;
+            ++n_errors;
         } catch(std::domain_error const&) {}
 
         test_comp_ellint_1( 0.0,  M_PI_2);
@@ -304,8 +304,8 @@ int main() {
         test_legendre(2, qNaN,   qNaN);
     } catch(...) {
         std::cerr << "Caught unexpected exception\n";
-        status = 1;
+        ++n_errors;
     }
 
-    return status;
+    return n_errors != 0;
 }
