@@ -126,3 +126,6 @@
 	path = algorithm
 	url = https://github.com/boostorg/algorithm
 	shallow = true
+[submodule "optional"]
+	path = optional
+	url = https://github.com/boostorg/optional
