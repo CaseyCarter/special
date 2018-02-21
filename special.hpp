@@ -8,6 +8,8 @@
 #define _NODISCARD
 #endif
 
+enum { PM_TEST_PASS = 0, PM_TEST_FAIL = 1 };
+
 #if _HAS_CXX17
 _STD_BEGIN
 

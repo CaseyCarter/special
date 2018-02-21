@@ -40,14 +40,18 @@ add_library(smf
     sph_legendre.cpp sph_legendref.cpp
     sph_neumann.cpp sph_neumannf.cpp)
 target_link_libraries(smf PRIVATE boost)
-target_compile_options(smf PRIVATE /std:c++latest)
+target_compile_options(smf PRIVATE /std:c++latest /WX)
+target_compile_definitions(smf PRIVATE
+    BOOST_MATH_DOMAIN_ERROR_POLICY=errno_on_error
+    BOOST_MATH_OVERFLOW_ERROR_POLICY=errno_on_error)
 
-add_executable(spot test.cpp)
-target_compile_options(spot PRIVATE /std:c++latest)
-target_link_libraries(spot smf boost)
-add_test(spot spot)
+function(add_smf_test TESTNAME SOURCES...)
+  add_executable(${TESTNAME} ${SOURCES...})
+  target_compile_options(${TESTNAME} PRIVATE /std:c++latest /WX)
+  target_link_libraries(${TESTNAME} smf boost)
+  add_test(${TESTNAME} ${TESTNAME})
+endfunction(add_smf_test)
 
-add_executable(test_beta test_beta.cpp)
-target_compile_options(test_beta PRIVATE /std:c++latest)
-target_link_libraries(test_beta smf boost)
-add_test(test_beta test_beta)
+add_smf_test(spot test.cpp)
+add_smf_test(test_beta test_beta.cpp)
+add_smf_test(test_laguerre test_laguerre.cpp)

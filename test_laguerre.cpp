@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE beta
+#define BOOST_TEST_MODULE laguerre
 #define BOOST_TEST_NO_MAIN
 #define BOOST_TEST_ALTERNATIVE_INIT_API
 
@@ -14,37 +14,33 @@ namespace {
     struct table_type { using type = T; };
 
     template<class T, class F>
-    void test_beta(F f) {
+    void test_laguerre(F f) {
 #define SC_(X) static_cast<T>(BOOST_JOIN(X, L))
         auto const eps = boost::math::tools::epsilon<T>();
 
         {
-#include "math/test/beta_small_data.ipp"
-            for(auto const& datum : beta_small_data) {
-                BOOST_CHECK_CLOSE_FRACTION(f(datum[0], datum[1]), datum[2], 3 * eps);
+#include "math/test/laguerre2.ipp"
+            for(auto const& datum : laguerre2) {
+                BOOST_CHECK_CLOSE_FRACTION(f(std::lround(datum[0]), datum[1]), datum[2], 4000 * eps);
             }
         }
 
+#if 0
         {
-#include "math/test/beta_med_data.ipp"
+#include "math/test/laguerre3.ipp"
             for(auto const& datum : beta_med_data) {
                 BOOST_CHECK_CLOSE_FRACTION(f(datum[0], datum[1]), datum[2], 98 * eps);
             }
         }
+#endif
 
-        {
-#include "math/test/beta_exp_data.ipp"
-            for(auto const& datum : beta_exp_data) {
-                BOOST_CHECK_CLOSE_FRACTION(f(datum[0], datum[1]), datum[2], 12 * eps);
-            }
-        }
 #undef SC_
     }
 } // unnamed namespace
 
-BOOST_AUTO_TEST_CASE(beta)  { test_beta<double>(std::beta); }
-BOOST_AUTO_TEST_CASE(betaf) { test_beta<float>(std::betaf); }
-BOOST_AUTO_TEST_CASE(betal) { test_beta<long double>(std::betal); }
+BOOST_AUTO_TEST_CASE(laguerre)  { test_laguerre<double>(std::laguerre); }
+BOOST_AUTO_TEST_CASE(laguerref) { test_laguerre<float>(std::laguerref); }
+BOOST_AUTO_TEST_CASE(laguerrel) { test_laguerre<long double>(std::laguerrel); }
 
 int main(int argc, char *argv[]) {
     auto const result = boost::unit_test::unit_test_main(init_unit_test, argc, argv);

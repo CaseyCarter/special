@@ -86,8 +86,9 @@
             ],
             "defines": [
                 "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
+                "_HAS_CXX17",
+                "_UNICODE",
+                "UNICODE"
             ],
             "intelliSenseMode": "msvc-x64",
             "browse": {
