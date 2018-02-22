@@ -54,4 +54,4 @@ endfunction(add_smf_test)
 
 add_smf_test(spot test.cpp)
 add_smf_test(test_special test_special.cpp)
-add_smf_test(test_laguerre test_laguerre.cpp)
+add_smf_test(test_wip test_wip.cpp)

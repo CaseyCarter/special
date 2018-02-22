@@ -1,14 +1,17 @@
-#define BOOST_TEST_MODULE laguerre
+#define BOOST_TEST_MODULE legendre
 #define BOOST_TEST_NO_MAIN
 #define BOOST_TEST_ALTERNATIVE_INIT_API
 
 #include <cmath>
+#include <algorithm>
 #include <limits>
 #include <boost/array.hpp>
 #include <boost/math/special_functions.hpp>
 #include <boost/math/tools/precision.hpp>
 #include <boost/test/included/unit_test.hpp>
 #include "special.hpp"
+
+BOOST_AUTO_TEST_CASE(nothing) {}
 
 template<class T>
 constexpr auto eps = boost::math::tools::epsilon<T>();
