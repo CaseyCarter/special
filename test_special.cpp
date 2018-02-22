@@ -29,12 +29,19 @@ constexpr bool always_false = false;
 
 using fptypes = boost::mpl::list<float, double, long double>;
 
-bool verify_domain_error() {
+inline bool verify_domain_error() {
     return std::exchange(errno, 0) == EDOM;
 }
 
-bool verify_not_domain_error() {
+inline bool verify_not_domain_error() {
     return std::exchange(errno, 0) == 0;
+}
+
+template<class Range, class Fn>
+inline void for_each(Range&& rng, Fn f) {
+    using std::begin;
+    using std::end;
+    std::for_each(begin(rng), end(rng), f);
 }
 
 namespace assoc_laguerre {
@@ -69,12 +76,18 @@ namespace assoc_laguerre {
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_assoc_laguerre_spots, T, fptypes) {
         auto const tolerance = eps<T> * 100;
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, 5, static_cast<T>(0.5L)), static_cast<T>(88.31510416666666666666666666666666666667L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, 0, static_cast<T>(2.5L)), static_cast<T>(-0.8802526766660982969576719576719576719577L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, 1, static_cast<T>(4.5L)), static_cast<T>(1.564311458042689732142857142857142857143L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, 6, static_cast<T>(8.5L)), static_cast<T>(20.51596541066649098875661375661375661376L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, 12, static_cast<T>(12.5L)), static_cast<T>(-199.5560968456234671241181657848324514991L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(50, 40, static_cast<T>(12.5L)), static_cast<T>(-4.996769495006119488583146995907246595400e16L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, 5, static_cast<T>(0.5L)),
+            static_cast<T>(88.31510416666666666666666666666666666667L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, 0, static_cast<T>(2.5L)),
+            static_cast<T>(-0.8802526766660982969576719576719576719577L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, 1, static_cast<T>(4.5L)),
+            static_cast<T>(1.564311458042689732142857142857142857143L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, 6, static_cast<T>(8.5L)),
+            static_cast<T>(20.51596541066649098875661375661375661376L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, 12, static_cast<T>(12.5L)),
+            static_cast<T>(-199.5560968456234671241181657848324514991L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(50, 40, static_cast<T>(12.5L)),
+            static_cast<T>(-4.996769495006119488583146995907246595400e16L), tolerance);
     }
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_assoc_laguerre_boundaries, T, fptypes) {
@@ -117,28 +130,46 @@ namespace assoc_legendre {
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_assoc_legendre_spots, T, fptypes) {
         auto const tolerance = eps<T> * 100;
 
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, 2, static_cast<T>(0.5L)), static_cast<T>(4.218750000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-4, 2, static_cast<T>(0.5L)), static_cast<T>(5.625000000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, 5, static_cast<T>(0.5L)), static_cast<T>(-5696.789530152175143607977274672800795328L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-7, 4, static_cast<T>(0.5L)), static_cast<T>(465.1171875000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, 2, static_cast<T>(0.5L)),
+            static_cast<T>(4.218750000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-4, 2, static_cast<T>(0.5L)),
+            static_cast<T>(5.625000000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, 5, static_cast<T>(0.5L)),
+            static_cast<T>(-5696.789530152175143607977274672800795328L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-7, 4, static_cast<T>(0.5L)),
+            static_cast<T>(465.1171875000000000000000000000000000000L), tolerance);
         if(std::numeric_limits<T>::max_exponent > std::numeric_limits<float>::max_exponent) {
-            BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(40, 30, static_cast<T>(0.5L)), static_cast<T>(-7.855722083232252643913331343916012143461e45L), tolerance);
+            BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(40, 30, static_cast<T>(0.5L)),
+                static_cast<T>(-7.855722083232252643913331343916012143461e45L), tolerance);
         }
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-40, 20, static_cast<T>(0.5L)), static_cast<T>(4.966634149702370788037088925152355134665e30L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, 2, static_cast<T>(-0.5L)), static_cast<T>(4.218750000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-4, 2, static_cast<T>(-0.5L)), static_cast<T>(-5.625000000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, 5, static_cast<T>(-0.5L)), static_cast<T>(-5696.789530152175143607977274672800795328L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-7, 4, static_cast<T>(-0.5L)), static_cast<T>(465.1171875000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-40, 20, static_cast<T>(0.5L)),
+            static_cast<T>(4.966634149702370788037088925152355134665e30L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, 2, static_cast<T>(-0.5L)),
+            static_cast<T>(4.218750000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-4, 2, static_cast<T>(-0.5L)),
+            static_cast<T>(-5.625000000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, 5, static_cast<T>(-0.5L)),
+            static_cast<T>(-5696.789530152175143607977274672800795328L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-7, 4, static_cast<T>(-0.5L)),
+            static_cast<T>(465.1171875000000000000000000000000000000L), tolerance);
         if(std::numeric_limits<T>::max_exponent > std::numeric_limits<float>::max_exponent) {
-            BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(40, 30, static_cast<T>(-0.5L)), static_cast<T>(-7.855722083232252643913331343916012143461e45L), tolerance);
+            BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(40, 30, static_cast<T>(-0.5L)),
+                static_cast<T>(-7.855722083232252643913331343916012143461e45L), tolerance);
         }
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-40, 20, static_cast<T>(-0.5L)), static_cast<T>(-4.966634149702370788037088925152355134665e30L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, -2, static_cast<T>(0.5L)), static_cast<T>(0.01171875000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-4, -2, static_cast<T>(0.5L)), static_cast<T>(0.04687500000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, -5, static_cast<T>(0.5L)), static_cast<T>(0.00002378609812640364935569308025139290054701L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-7, -4, static_cast<T>(0.5L)), static_cast<T>(0.0002563476562500000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(40, -30, static_cast<T>(0.5L)), static_cast<T>(-2.379819988646847616996471299410611801239e-48L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-40, -20, static_cast<T>(0.5L)), static_cast<T>(4.356454600748202401657099008867502679122e-33L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-40, 20, static_cast<T>(-0.5L)),
+            static_cast<T>(-4.966634149702370788037088925152355134665e30L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, -2, static_cast<T>(0.5L)),
+            static_cast<T>(0.01171875000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-4, -2, static_cast<T>(0.5L)),
+            static_cast<T>(0.04687500000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, -5, static_cast<T>(0.5L)),
+            static_cast<T>(0.00002378609812640364935569308025139290054701L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-7, -4, static_cast<T>(0.5L)),
+            static_cast<T>(0.0002563476562500000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(40, -30, static_cast<T>(0.5L)),
+            static_cast<T>(-2.379819988646847616996471299410611801239e-48L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-40, -20, static_cast<T>(0.5L)),
+            static_cast<T>(4.356454600748202401657099008867502679122e-33L), tolerance);
     }
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_assoc_legendre_boundaries, T, fptypes) {
@@ -180,36 +211,35 @@ namespace beta {
 #include "math/test/beta_med_data.ipp"
 #include "math/test/beta_exp_data.ipp"
 
-        for(auto const& datum : beta_small_data) {
-            auto const actual = test_fn<T>(datum[0], datum[1]);
-            BOOST_CHECK_EQUAL(actual, control_fn<T>(datum[0], datum[1]));
-            BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], 3 * eps<T>);
-        }
+        auto const tester = [](T tolerance) {
+            return [tolerance](auto const& datum) {
+                auto const actual = test_fn<T>(datum[0], datum[1]);
+                BOOST_CHECK_EQUAL(actual, control_fn<T>(datum[0], datum[1]));
+                BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], tolerance);
+            };
+        };
 
-        for(auto const& datum : beta_med_data) {
-            auto const actual = test_fn<T>(datum[0], datum[1]);
-            BOOST_CHECK_EQUAL(actual, control_fn<T>(datum[0], datum[1]));
-            BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], 98 * eps<T>);
-        }
-
-        for(auto const& datum : beta_exp_data) {
-            auto const actual = test_fn<T>(datum[0], datum[1]);
-            BOOST_CHECK_EQUAL(actual, control_fn<T>(datum[0], datum[1]));
-            BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], 12 * eps<T>);
-        }
+        ::for_each(beta_small_data, tester(3 * eps<T>));
+        ::for_each(beta_med_data, tester(98 * eps<T>));
+        ::for_each(beta_exp_data, tester(12 * eps<T>));
     }
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_beta_spots, T, fptypes) {
         auto const tolerance = eps<T> * 20;
         auto const small = eps<T> / 1024;
 
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(1), static_cast<T>(1)), static_cast<T>(1), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(1), static_cast<T>(4)), static_cast<T>(0.25), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(4), static_cast<T>(1)), static_cast<T>(0.25), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(1), static_cast<T>(1)),
+            static_cast<T>(1), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(1), static_cast<T>(4)),
+            static_cast<T>(0.25), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(4), static_cast<T>(1)),
+            static_cast<T>(0.25), tolerance);
         BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(small, static_cast<T>(4)), 1/small, tolerance);
         BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(4), small), 1/small, tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(4), static_cast<T>(20)), static_cast<T>(0.00002823263692828910220214568040654997176736L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(0.0125L), static_cast<T>(0.000023L)), static_cast<T>(43558.24045647538375006349016083320744662L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(4), static_cast<T>(20)),
+            static_cast<T>(0.00002823263692828910220214568040654997176736L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(0.0125L), static_cast<T>(0.000023L)),
+            static_cast<T>(43558.24045647538375006349016083320744662L), tolerance);
     }
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_beta_boundaries, T, fptypes) {
@@ -228,7 +258,8 @@ namespace beta {
         BOOST_CHECK(verify_domain_error());
         BOOST_CHECK(std::isnan(test_fn<T>(static_cast<T>(0), static_cast<T>(0))));
         BOOST_CHECK(verify_domain_error());
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(1e-20L), static_cast<T>(1e-20L)), static_cast<T>(1.9999999999999999999999999999999999999996710131866303e20L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(1e-20L), static_cast<T>(1e-20L)),
+            static_cast<T>(1.99999999999999999999999999999999999999967101e20L), tolerance);
         BOOST_CHECK(verify_not_domain_error());
     }
 } // namespace beta
@@ -264,23 +295,38 @@ namespace laguerre {
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_laguerre_spots, T, fptypes) {
         auto const tolerance = eps<T> * 100;
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(0.5L)), static_cast<T>(0.5L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, static_cast<T>(0.5L)), static_cast<T>(-0.3307291666666666666666666666666666666667L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, static_cast<T>(0.5L)), static_cast<T>(-0.5183392237103174603174603174603174603175L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(20, static_cast<T>(0.5L)), static_cast<T>(0.3120174870800154148915399248893113634676L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(50, static_cast<T>(0.5L)), static_cast<T>(-0.3181388060269979064951118308575628226834L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(0.5L)),
+            static_cast<T>(0.5L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, static_cast<T>(0.5L)),
+            static_cast<T>(-0.3307291666666666666666666666666666666667L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, static_cast<T>(0.5L)),
+            static_cast<T>(-0.5183392237103174603174603174603174603175L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(20, static_cast<T>(0.5L)),
+            static_cast<T>(0.3120174870800154148915399248893113634676L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(50, static_cast<T>(0.5L)),
+            static_cast<T>(-0.3181388060269979064951118308575628226834L), tolerance);
 
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(-0.5L)), static_cast<T>(1.5L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, static_cast<T>(-0.5L)), static_cast<T>(3.835937500000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, static_cast<T>(-0.5L)), static_cast<T>(7.950934709821428571428571428571428571429L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(20, static_cast<T>(-0.5L)), static_cast<T>(76.12915699869631476833699787070874048223L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(50, static_cast<T>(-0.5L)), static_cast<T>(2307.428631277506570629232863491518399720L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(-0.5L)),
+            static_cast<T>(1.5L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, static_cast<T>(-0.5L)),
+            static_cast<T>(3.835937500000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, static_cast<T>(-0.5L)),
+            static_cast<T>(7.950934709821428571428571428571428571429L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(20, static_cast<T>(-0.5L)),
+            static_cast<T>(76.12915699869631476833699787070874048223L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(50, static_cast<T>(-0.5L)),
+            static_cast<T>(2307.428631277506570629232863491518399720L), tolerance);
 
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(4.5L)), static_cast<T>(-3.500000000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, static_cast<T>(4.5L)), static_cast<T>(0.08593750000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, static_cast<T>(4.5L)), static_cast<T>(-1.036928013392857142857142857142857142857L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(20, static_cast<T>(4.5L)), static_cast<T>(1.437239150257817378525582974722170737587L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(50, static_cast<T>(4.5L)), static_cast<T>(-0.7795068145562651416494321484050019245248L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(4.5L)),
+            static_cast<T>(-3.500000000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, static_cast<T>(4.5L)),
+            static_cast<T>(0.08593750000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, static_cast<T>(4.5L)),
+            static_cast<T>(-1.036928013392857142857142857142857142857L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(20, static_cast<T>(4.5L)),
+            static_cast<T>(1.437239150257817378525582974722170737587L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(50, static_cast<T>(4.5L)),
+            static_cast<T>(-0.7795068145562651416494321484050019245248L), tolerance);
     }
 } // namespace laguerre
 
@@ -313,20 +359,28 @@ namespace legendre {
                 BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], 310 * eps<T>);
         };
 
-        std::for_each(std::begin(legendre_p), std::end(legendre_p), test_one_value);
-        std::for_each(std::begin(legendre_p_large), std::end(legendre_p_large), test_one_value);
+        ::for_each(legendre_p, test_one_value);
+        ::for_each(legendre_p_large, test_one_value);
     }
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_legendre_spots, T, fptypes) {
         auto const tolerance = eps<T> * 100;
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(0.5L)), static_cast<T>(0.5L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-1, static_cast<T>(0.5L)), static_cast<T>(1L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, static_cast<T>(0.5L)), static_cast<T>(-0.2890625000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-4, static_cast<T>(0.5L)), static_cast<T>(-0.4375000000000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, static_cast<T>(0.5L)), static_cast<T>(0.2231445312500000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-7, static_cast<T>(0.5L)), static_cast<T>(0.3232421875000000000000000000000000000000L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(40, static_cast<T>(0.5L)), static_cast<T>(-0.09542943523261546936538467572384923220258L), tolerance);
-        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-40, static_cast<T>(0.5L)), static_cast<T>(-0.1316993126940266257030910566308990611306L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(0.5L)),
+            static_cast<T>(0.5L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-1, static_cast<T>(0.5L)),
+            static_cast<T>(1L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(4, static_cast<T>(0.5L)),
+            static_cast<T>(-0.2890625000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-4, static_cast<T>(0.5L)),
+            static_cast<T>(-0.4375000000000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(7, static_cast<T>(0.5L)),
+            static_cast<T>(0.2231445312500000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-7, static_cast<T>(0.5L)),
+            static_cast<T>(0.3232421875000000000000000000000000000000L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(40, static_cast<T>(0.5L)),
+            static_cast<T>(-0.09542943523261546936538467572384923220258L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-40, static_cast<T>(0.5L)),
+            static_cast<T>(-0.1316993126940266257030910566308990611306L), tolerance);
     }
 } // namespace legendre
 
