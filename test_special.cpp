@@ -22,6 +22,9 @@ template<class T>
 constexpr auto qNaN = std::numeric_limits<T>::quiet_NaN();
 
 template<class T>
+constexpr auto inf = std::numeric_limits<T>::infinity();
+
+template<class T>
 struct table_type { using type = T; };
 
 template<class>
@@ -69,7 +72,7 @@ namespace assoc_laguerre {
             unsigned const m = std::lround(datum[1]);
             auto const actual = test_fn<T>(n, m, datum[2]);
             BOOST_CHECK_EQUAL(actual, control_fn<T>(n, m, datum[2]));
-            if (actual != datum[3]) // +/-inf is equal to, but not "close" to, +/-inf
+            if (!(actual == datum[3])) // +/-inf is equal to, but not "close" to, +/-inf
                 BOOST_CHECK_CLOSE_FRACTION(actual, datum[3], 440 * eps<T>);
         }
     }
@@ -122,7 +125,7 @@ namespace assoc_legendre {
             unsigned const m = std::lround(datum[1]);
             auto const actual = test_fn<T>(l, m, datum[2]);
             BOOST_CHECK_EQUAL(actual, control_fn<T>(l, m, datum[2]));
-            if (actual != datum[3]) // +/-inf is equal to, but not "close" to, +/-inf
+            if (!(actual == datum[3])) // +/-inf is equal to, but not "close" to, +/-inf
                 BOOST_CHECK_CLOSE_FRACTION(actual, datum[3], 150 * eps<T>); // FIXME: tune
         }
     }
@@ -264,6 +267,150 @@ namespace beta {
     }
 } // namespace beta
 
+namespace comp_ellint_1 {
+    template<class T>
+    constexpr auto control_fn = [](T k) {
+        return boost::math::ellint_1(k);
+    };
+
+    template<class T>
+    constexpr auto test_fn = [](auto k) {
+        static_assert(always_false<decltype(k)>, "BOOM");
+    };
+    template<>
+    constexpr auto test_fn<float> = std::comp_ellint_1f;
+    template<>
+    constexpr auto test_fn<double> = std::comp_ellint_1;
+    template<>
+    constexpr auto test_fn<long double> = std::comp_ellint_1l;
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_comp_ellint_1, T, fptypes) {
+        // From function test_spots in test_ellint_1.hpp:
+        static const boost::array<boost::array<typename table_type<T>::type, 2>, 9> data2 = {{
+            {{ SC_(0.0), SC_(1.5707963267948966192313216916397514420985846996876) }},
+            {{ SC_(0.125), SC_(1.5769867712158131421244030532288080803822271060839) }},
+            {{ SC_(0.25), SC_(1.5962422221317835101489690714979498795055744578951) }},
+            {{ SC_(0.29296875) /*T(300)/1024*/, SC_(1.6062331054696636704261124078746600894998873503208) }},
+            {{ SC_(0.390625) /*T(400)/1024*/, SC_(1.6364782007562008756208066125715722889067992997614) }},
+            {{ SC_(-0.5), SC_(1.6857503548125960428712036577990769895008008941411) }},
+            {{ SC_(-0.75), SC_(1.9109897807518291965531482187613425592531451316788) }},
+            {{ SC_(0.875) /*1-T(1)/8*/, SC_(2.185488469278223686913080323730158689730428415766) }},
+            {{ SC_(0.9990234375) /*1-T(1)/1024*/, SC_(4.5074135978990422666372495313621124487894807327687) }},
+        }};
+
+#include "math/test/ellint_k_data.ipp"
+
+        auto const tester = [](T tolerance) {
+            return [tolerance](auto const& datum) {
+                auto const actual = test_fn<T>(datum[0]);
+                BOOST_CHECK_EQUAL(actual, control_fn<T>(datum[0]));
+                BOOST_CHECK_CLOSE_FRACTION(actual, datum[1], tolerance);
+            };
+        };
+
+        ::for_each(data2, tester(eps<T>));
+        ::for_each(ellint_k_data, tester(eps<T>));
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_comp_ellint_1_boundaries, T, fptypes) {
+        auto const tolerance = eps<T>;
+
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+
+        // domain is |k| <= 1
+        BOOST_CHECK(std::isnan(test_fn<T>(static_cast<T>(2))));
+        BOOST_CHECK(verify_domain_error());
+        BOOST_CHECK(std::isnan(test_fn<T>(static_cast<T>(-2))));
+        BOOST_CHECK(verify_domain_error());
+
+        BOOST_CHECK_EQUAL(test_fn<T>(static_cast<T>(1)), inf<T>);
+        BOOST_CHECK(verify_not_domain_error());
+        BOOST_CHECK_EQUAL(test_fn<T>(static_cast<T>(-1)), inf<T>);
+        BOOST_CHECK(verify_not_domain_error());
+    }
+} // namespace comp_ellint_1
+
+namespace ellint_1 {
+    template<class T>
+    constexpr auto control_fn = [](T k, T phi) {
+        return boost::math::ellint_1(k, phi);
+    };
+
+    template<class T>
+    constexpr auto test_fn = [](auto k, T) {
+        static_assert(always_false<decltype(k)>, "BOOM");
+    };
+    template<>
+    constexpr auto test_fn<float> = std::ellint_1f;
+    template<>
+    constexpr auto test_fn<double> = std::ellint_1;
+    template<>
+    constexpr auto test_fn<long double> = std::ellint_1l;
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_ellint_1, T, fptypes) {
+        // From function test_spots in test_ellint_1.hpp:
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 19> data1 = {{
+            {{ SC_(0.0), SC_(0.0), SC_(0.0) }},
+            {{ SC_(-10.0), SC_(0.0), SC_(-10.0) }},
+            {{ SC_(-1.0), SC_(-1.0), SC_(-1.2261911708835170708130609674719067527242483502207) }},
+            {{ SC_(-4.0), SC_(0.875), SC_(-5.3190556182262405182189463092940736859067548232647) }},
+            {{ SC_(8.0), SC_(-0.625), SC_(9.0419973860310100524448893214394562615252527557062) }},
+            {{ SC_(1e-05), SC_(0.875), SC_(0.000010000000000127604166668510945638036143355898993088) }},
+            {{ SC_(1e+05), SC_(0.009765625) /*T(10)/1024*/, SC_(100002.38431454899771096037307519328741455615271038) }},
+            {{ SC_(1e-20), SC_(1.0), SC_(1.0000000000000000000000000000000000000000166666667e-20) }},
+            {{ SC_(1e-20), SC_(1e-20), SC_(1.000000000000000e-20) }},
+            {{ SC_(1e+20), SC_(0.390625) /*T(400)/1024*/, SC_(1.0418143796499216839719289963154558027005142709763e20) }},
+            {{ SC_(1e+50), SC_(0.875), SC_(1.3913251718238765549409892714295358043696028445944e50) }},
+            {{ SC_(2.0), SC_(0.5), SC_(2.1765877052210673672479877957388515321497888026770) }},
+            {{ SC_(4.0), SC_(0.5), SC_(4.2543274975235836861894752787874633017836785640477) }},
+            {{ SC_(6.0), SC_(0.5), SC_(6.4588766202317746302999080620490579800463614807916) }},
+            {{ SC_(10.0), SC_(0.5), SC_(10.697409951222544858346795279378531495869386960090) }},
+            {{ SC_(-2.0), SC_(0.5), SC_(-2.1765877052210673672479877957388515321497888026770) }},
+            {{ SC_(-4.0), SC_(0.5), SC_(-4.2543274975235836861894752787874633017836785640477) }},
+            {{ SC_(-6.0), SC_(0.5), SC_(-6.4588766202317746302999080620490579800463614807916) }},
+            {{ SC_(-10.0), SC_(0.5), SC_(-10.697409951222544858346795279378531495869386960090) }},
+        }};
+
+#include "math/test/ellint_f_data.ipp"
+
+        auto const tester = [](T tolerance) {
+            return [tolerance](auto const& datum) {
+                auto const actual = test_fn<T>(datum[1], datum[0]);
+                BOOST_CHECK_EQUAL(actual, control_fn<T>(datum[1], datum[0]));
+                if (!(actual == datum[2])) // +/-inf is equal to, but not "close" to, +/-inf
+                    BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], tolerance);
+            };
+        };
+
+        ::for_each(data1, tester(eps<T>));
+        ::for_each(ellint_f_data, tester(3 * eps<T>));
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_ellint_1_boundaries, T, fptypes) {
+        auto const tolerance = eps<T>;
+
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(static_cast<T>(1), qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+        BOOST_CHECK(std::isnan(test_fn<T>(qNaN<T>, static_cast<T>(1))));
+        BOOST_CHECK(verify_not_domain_error());
+
+        // domain is |k| <= 1
+        BOOST_CHECK(std::isnan(test_fn<T>(static_cast<T>(2), static_cast<T>(0))));
+        BOOST_CHECK(verify_domain_error());
+        BOOST_CHECK(std::isnan(test_fn<T>(static_cast<T>(-2), static_cast<T>(0))));
+        BOOST_CHECK(verify_domain_error());
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(1), static_cast<T>(0)),
+            static_cast<T>(0L), tolerance);
+        BOOST_CHECK(verify_not_domain_error());
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(0), static_cast<T>(1)),
+            static_cast<T>(1L), tolerance);
+        BOOST_CHECK(verify_not_domain_error());
+    }
+} // namespace ellint_1
+
 namespace laguerre {
     template<class>
     constexpr auto test_fn = [](unsigned, auto x) {
@@ -288,7 +435,7 @@ namespace laguerre {
             unsigned const n = std::lround(datum[0]);
             auto const actual = test_fn<T>(n, datum[1]);
             BOOST_CHECK_EQUAL(actual, control_fn<T>(n, datum[1]));
-            if (actual != datum[2]) // +/-inf is equal to, but not "close" to, +/-inf
+            if (!(actual == datum[2])) // +/-inf is equal to, but not "close" to, +/-inf
                 BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], 3200 * eps<T>);
         }
     }
@@ -361,7 +508,7 @@ namespace legendre {
             unsigned const l = std::lround(datum[0]);
             auto const actual = test_fn<T>(l, datum[1]);
             BOOST_CHECK_EQUAL(actual, control_fn<T>(l, datum[1]));
-            if (actual != datum[2]) // +/-inf is equal to, but not "close" to, +/-inf
+            if (!(actual == datum[2])) // +/-inf is equal to, but not "close" to, +/-inf
                 BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], 310 * eps<T>);
         };
 

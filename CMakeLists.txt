@@ -15,7 +15,7 @@ target_include_directories(boost INTERFACE
 target_compile_definitions(boost INTERFACE
     BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE
     BOOST_MATH_DOMAIN_ERROR_POLICY=errno_on_error
-    BOOST_MATH_OVERFLOW_ERROR_POLICY=errno_on_error)
+    BOOST_MATH_OVERFLOW_ERROR_POLICY=ignore_error)
 
 enable_testing()
 
