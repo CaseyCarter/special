@@ -328,6 +328,12 @@ namespace laguerre {
         BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(50, static_cast<T>(4.5L)),
             static_cast<T>(-0.7795068145562651416494321484050019245248L), tolerance);
     }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_laguerre_boundaries, T, fptypes) {
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(1u, qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+    }
 } // namespace laguerre
 
 namespace legendre {
@@ -381,6 +387,24 @@ namespace legendre {
             static_cast<T>(-0.09542943523261546936538467572384923220258L), tolerance);
         BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(-40, static_cast<T>(0.5L)),
             static_cast<T>(-0.1316993126940266257030910566308990611306L), tolerance);
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_legendre_boundaries, T, fptypes) {
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(1u, qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+
+        // domain is |x| <= 1
+        BOOST_CHECK(std::isnan(test_fn<T>(0u, static_cast<T>(2))));
+        BOOST_CHECK(verify_domain_error());
+        BOOST_CHECK(std::isnan(test_fn<T>(0u, static_cast<T>(-2))));
+        BOOST_CHECK(verify_domain_error());
+
+        auto const tolerance = eps<T>;
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(0u, static_cast<T>(1)), static_cast<T>(1), tolerance);
+        BOOST_CHECK(verify_not_domain_error());
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(0u, static_cast<T>(-1)), static_cast<T>(1), tolerance);
+        BOOST_CHECK(verify_not_domain_error());
     }
 } // namespace legendre
 
