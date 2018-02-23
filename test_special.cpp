@@ -50,7 +50,7 @@ inline void for_each(Range&& rng, Fn f) {
 namespace assoc_laguerre {
     template<class>
     constexpr auto test_fn = [](unsigned, auto x) {
-        static_assert(always_false<decltype(x)>, "BOOM");
+        static_assert(always_false<decltype(x)>);
     };
     template<>
     constexpr auto test_fn<float> = std::assoc_laguerref;
@@ -103,7 +103,7 @@ namespace assoc_laguerre {
 namespace assoc_legendre {
     template<class>
     constexpr auto test_fn = [](unsigned, auto x) {
-        static_assert(always_false<decltype(x)>, "BOOM");
+        static_assert(always_false<decltype(x)>);
     };
     template<>
     constexpr auto test_fn<float> = std::assoc_legendref;
@@ -200,7 +200,7 @@ namespace beta {
 
     template<class T>
     constexpr auto test_fn = [](auto x, T) {
-        static_assert(always_false<decltype(x)>, "BOOM");
+        static_assert(always_false<decltype(x)>);
     };
     template<>
     constexpr auto test_fn<float> = std::betaf;
@@ -275,7 +275,7 @@ namespace comp_ellint_1 {
 
     template<class T>
     constexpr auto test_fn = [](auto k) {
-        static_assert(always_false<decltype(k)>, "BOOM");
+        static_assert(always_false<decltype(k)>);
     };
     template<>
     constexpr auto test_fn<float> = std::comp_ellint_1f;
@@ -340,7 +340,7 @@ namespace comp_ellint_2 {
 
     template<class T>
     constexpr auto test_fn = [](auto k) {
-        static_assert(always_false<decltype(k)>, "BOOM");
+        static_assert(always_false<decltype(k)>);
     };
     template<>
     constexpr auto test_fn<float> = std::comp_ellint_2f;
@@ -406,7 +406,7 @@ namespace ellint_1 {
 
     template<class T>
     constexpr auto test_fn = [](auto k, T) {
-        static_assert(always_false<decltype(k)>, "BOOM");
+        static_assert(always_false<decltype(k)>);
     };
     template<>
     constexpr auto test_fn<float> = std::ellint_1f;
@@ -485,7 +485,7 @@ namespace ellint_2 {
 
     template<class T>
     constexpr auto test_fn = [](auto k, T) {
-        static_assert(always_false<decltype(k)>, "BOOM");
+        static_assert(always_false<decltype(k)>);
     };
     template<>
     constexpr auto test_fn<float> = std::ellint_2f;
@@ -555,7 +555,7 @@ namespace ellint_2 {
 namespace laguerre {
     template<class>
     constexpr auto test_fn = [](unsigned, auto x) {
-        static_assert(always_false<decltype(x)>, "BOOM");
+        static_assert(always_false<decltype(x)>);
     };
     template<>
     constexpr auto test_fn<float> = std::laguerref;
@@ -627,7 +627,7 @@ namespace laguerre {
 namespace legendre {
     template<class>
     constexpr auto test_fn = [](unsigned, auto x) {
-        static_assert(always_false<decltype(x)>, "BOOM");
+        static_assert(always_false<decltype(x)>);
     };
     template<>
     constexpr auto test_fn<float> = std::legendref;
