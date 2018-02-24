@@ -9,6 +9,9 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "fstream": "cpp",
+        "xlocmes": "cpp",
+        "functional": "cpp"
     }
 }

@@ -47,6 +47,13 @@ inline void for_each(Range&& rng, Fn f) {
     std::for_each(begin(rng), end(rng), f);
 }
 
+template<class Range1, class Range2>
+inline bool equal(Range1&& r1, Range2&& r2) {
+    using std::begin;
+    using std::end;
+    return std::equal(begin(r1), end(r1), begin(r2), end(r2));
+}
+
 namespace assoc_laguerre {
     template<class>
     constexpr auto test_fn = [](unsigned, auto x) {
@@ -480,6 +487,290 @@ namespace comp_ellint_3 {
         BOOST_CHECK(verify_domain_error());
     }
 } // namespace comp_ellint_3
+
+namespace cyl_bessel_i {
+    template<class T>
+    constexpr auto control_fn = [](T nu, T x) {
+        return boost::math::cyl_bessel_i(nu, x);
+    };
+
+    template<class T>
+    constexpr auto test_fn = [](auto nu, T) {
+        static_assert(always_false<decltype(nu)>);
+    };
+    template<>
+    constexpr auto test_fn<float> = std::cyl_bessel_if;
+    template<>
+    constexpr auto test_fn<double> = std::cyl_bessel_i;
+    template<>
+    constexpr auto test_fn<long double> = std::cyl_bessel_il;
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_cyl_bessel_i, T, fptypes) {
+        // Data taken from test_bessel_i.hpp:
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 10> i0_data = {{
+            {{ SC_(0.0), SC_(0.0), SC_(1.0) }},
+            {{ SC_(0.0), SC_(1.0), SC_(1.26606587775200833559824462521471753760767031135496220680814) }},
+            {{ SC_(0.0), SC_(-2.0), SC_(2.27958530233606726743720444081153335328584110278545905407084) }},
+            {{ SC_(0.0), SC_(4.0), SC_(11.3019219521363304963562701832171024974126165944353377060065) }},
+            {{ SC_(0.0), SC_(-7.0), SC_(168.593908510289698857326627187500840376522679234531714193194) }},
+            {{ SC_(0.0), SC_(0.0009765625), SC_(1.00000023841859331241759166109699567801556273303717896447683) }},
+            {{ SC_(0.0), SC_(9.5367431640625e-7), SC_(1.00000000000022737367544324498417583090700894607432256476338) }},
+            {{ SC_(0.0), SC_(-1.0), SC_(1.26606587775200833559824462521471753760767031135496220680814) }},
+            {{ SC_(0.0), SC_(100.0), SC_(1.07375170713107382351972085760349466128840319332527279540154e42) }},
+            {{ SC_(0.0), SC_(200.0), SC_(2.03968717340972461954167312677945962233267573614834337894328e85) }},
+        }};
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 10> i1_data = {{
+            {{ SC_(1.0), SC_(0.0), SC_(0.0) }},
+            {{ SC_(1.0), SC_(1.0), SC_(0.565159103992485027207696027609863307328899621621092009480294) }},
+            {{ SC_(1.0), SC_(-2.0), SC_(-1.59063685463732906338225442499966624795447815949553664713229) }},
+            {{ SC_(1.0), SC_(4.0), SC_(9.75946515370444990947519256731268090005597033325296730692753) }},
+            {{ SC_(1.0), SC_(-8.0), SC_(-399.873136782560098219083086145822754889628443904067647306574) }},
+            {{ SC_(1.0), SC_(0.0009765625), SC_(0.000488281308207663226432087816784315537514225208473395063575150) }},
+            {{ SC_(1.0), SC_(9.5367431640625e-7), SC_(4.76837158203179210108624277276025646653133998635956784292029E-7) }},
+            {{ SC_(1.0), SC_(-10.0), SC_(-2670.98830370125465434103196677215254914574515378753771310849) }},
+            {{ SC_(1.0), SC_(100.0), SC_(1.06836939033816248120614576322429526544612284405623226965918e42) }},
+            {{ SC_(1.0), SC_(200.0), SC_(2.03458154933206270342742797713906950389661161681122964159220e85) }},
+        }};
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 11> in_data = {{
+            {{ SC_(-2.0), SC_(0.0), SC_(0.0) }},
+            {{ SC_(2.0), SC_(9.5367431640625e-7), SC_(1.13686837721624646204093977095674566928522671779753217215467e-13) }},
+            {{ SC_(5.0), SC_(10.0), SC_(777.188286403259959907293484802339632852674154572666041953297) }},
+            {{ SC_(-5.0), SC_(100.0), SC_(9.47009387303558124618275555002161742321578485033007130107740e41) }},
+            {{ SC_(-5.0), SC_(-1.0), SC_(-0.000271463155956971875181073905153777342383564426758143634974124) }},
+            {{ SC_(10.0), SC_(20.0), SC_(3.54020020901952109905289138244985607057267103782948493874391e6) }},
+            {{ SC_(10.0), SC_(-5.0), SC_(0.00458004441917605126118647027872016953192323139337073320016447) }},
+            {{ SC_(1e+02), SC_(9.0), SC_(2.74306601746058997093587654668959071522869282506446891736820e-93) }},
+            {{ SC_(1e+02), SC_(80.0), SC_(4.65194832850610205318128191404145885093970505338730540776711e8) }},
+            {{ SC_(-100.0), SC_(-200.0), SC_(4.35275044972702191438729017441198257508190719030765213981307e74) }},
+            {{ SC_(10.0), SC_(1e-100), SC_(2.69114445546737213403880070546737213403880070546737213403880e-1010) }},
+        }};
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 10> iv_data = {{
+            {{ SC_(2.25), SC_(9.5367431640625e-7), SC_(2.34379212133481347189068464680335815256364262507955635911656e-15) }},
+            {{ SC_(5.5), SC_(3.125), SC_(0.0583514045989371500460946536220735787163510569634133670181210) }},
+            {{ SC_(-4.9990234375), SC_(2.125), SC_(0.0267920938009571023702933210070984416052633027166975342895062) }},
+            {{ SC_(-5.5), SC_(10.0), SC_(597.577606961369169607937419869926705730305175364662688426534) }},
+            {{ SC_(-5.5), SC_(100.0), SC_(9.22362906144706871737354069133813819358704200689067071415379e41) }},
+            {{ SC_(-10.0002994537353515625), SC_(0.0009765625), SC_(1.41474005665181350367684623930576333542989766867888186478185e35) }},
+            {{ SC_(-10.0002994537353515625), SC_(50.0), SC_(1.07153277202900671531087024688681954238311679648319534644743e20) }},
+            {{ SC_(141.400390625), SC_(100.0), SC_(2066.27694757392660413922181531984160871678224178890247540320) }},
+            {{ SC_(141.400390625), SC_(200.0), SC_(2.23699739472246928794922868978337381373643889659337595319774e64) }},
+            {{ SC_(-141.400390625), SC_(100.0), SC_(2066.27694672763190927440969155740243346136463461655104698748) }},
+        }};
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 5> iv_large_data = {{
+            // Bug report https://svn.boost.org/trac/boost/ticket/5560:
+            {{ SC_(-1.0), SC_(3.7291703656001033716454826577314669186882357673002034471357591666031391925350591524680874452002139016807558e-155), SC_(1.86458518280005168582274132886573345934411788365010172356788e-155) }},
+            {{ SC_(1.0),  SC_(3.7291703656001033716454826577314669186882357673002034471357591666031391925350591524680874452002139016807558e-155), SC_(1.86458518280005168582274132886573345934411788365010172356788e-155) }},
+            {{ SC_(-1.125), SC_(3.7291703656001033716454826577314669186882357673002034471357591666031391925350591524680874452002139016807558e-155), SC_(-1.34963720853101363690381585556234820027343435206156667634081e173) }},
+            {{ SC_(1.125),  SC_(3.7291703656001033716454826577314669186882357673002034471357591666031391925350591524680874452002139016807558e-155), SC_(8.02269390325932403421158766283366891170783955777638875887348e-175) }},
+            {{ SC_(0.5), SC_(1.2458993688871959419388378518880931736878259938089494331010226962863582408064841833232475731084062642684629e-206), SC_(8.90597649117647254543282704099383321071493400182381039079219e-104) }},
+        }};
+
+#include "math/test/bessel_i_int_data.ipp"
+#include "math/test/bessel_i_data.ipp"
+
+        auto const tester = [](T tolerance) {
+            return [tolerance](auto const& datum) {
+                auto const actual = test_fn<T>(datum[0], datum[1]);
+                BOOST_CHECK_EQUAL(actual, control_fn<T>(datum[0], datum[1]));
+                if (!(actual == datum[2])) {
+                    static constexpr std::array<T, 3> bad_value = {{
+                        SC_(0.7e2), SC_(0.177219114266335964202880859375e-2), SC_(0.175887342640394106189151976112543057962e-313)
+                    }};
+                    if (!(::equal(bad_value, datum))) { // TRANSITION, VSO#FIXME
+                        BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], tolerance);
+                    }
+                }
+            };
+        };
+
+        ::for_each(i0_data, tester(eps<T>));
+        ::for_each(i1_data, tester(eps<T>));
+        ::for_each(in_data, tester(4 * eps<T>));
+        ::for_each(iv_data, tester(4 * eps<T>));
+        if (0 != static_cast<T>(std::ldexp(0.5, -700))) {
+            ::for_each(iv_large_data, tester(4 * eps<T>));
+        }
+        ::for_each(bessel_i_int_data, tester(10 * eps<T>));
+        ::for_each(bessel_i_data, tester(8 * eps<T>));
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_cyl_bessel_i_boundaries, T, fptypes) {
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(static_cast<T>(1), qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+        BOOST_CHECK(std::isnan(test_fn<T>(qNaN<T>, static_cast<T>(1))));
+        BOOST_CHECK(verify_not_domain_error());
+    }
+} // namespace cyl_bessel_i
+
+namespace cyl_bessel_j {
+    template<class T>
+    constexpr auto control_fn = [](T nu, T x) {
+        return boost::math::cyl_bessel_j(nu, x);
+    };
+
+    template<class T>
+    constexpr auto test_fn = [](auto nu, T) {
+        static_assert(always_false<decltype(nu)>);
+    };
+    template<>
+    constexpr auto test_fn<float> = std::cyl_bessel_jf;
+    template<>
+    constexpr auto test_fn<double> = std::cyl_bessel_j;
+    template<>
+    constexpr auto test_fn<long double> = std::cyl_bessel_jl;
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_cyl_bessel_j, T, fptypes) {
+        // Data taken from test_bessel_j.hpp:
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 8> j0_data = {{
+            {{ SC_(0.0), SC_(0.0), SC_(1.0) }},
+            {{ SC_(0.0), SC_(1.0), SC_(0.7651976865579665514497175261026632209093) }},
+            {{ SC_(0.0), SC_(-2.0), SC_(0.2238907791412356680518274546499486258252) }},
+            {{ SC_(0.0), SC_(4.0), SC_(-0.3971498098638473722865907684516980419756) }},
+            {{ SC_(0.0), SC_(-8.0), SC_(0.1716508071375539060908694078519720010684) }},
+            {{ SC_(0.0), SC_(1e-05), SC_(0.999999999975000000000156249999999565972) }},
+            {{ SC_(0.0), SC_(1e-10), SC_(0.999999999999999999997500000000000000000) }},
+            {{ SC_(0.0), SC_(-1e+01), SC_(-0.2459357644513483351977608624853287538296) }},
+        }};
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 6> j0_tricky = {{
+            // Big numbers make the accuracy of std::sin the limiting factor:
+            {{ SC_(0.0), SC_(1e+03), SC_(0.02478668615242017456133073111569370878617) }},
+            {{ SC_(0.0), SC_(1e+05), SC_(-0.001719201116235972192570601477073201747532) }},
+            // test at the roots:
+            {{ SC_(0.0), SC_(2.4048252105712890625) /*T(2521642.0) / (1024 * 1024)*/, SC_(1.80208819970046790002973759410972422387259992955354630042138e-7) }},
+            {{ SC_(0.0), SC_(5.52007770538330078125) /*T(5788221.0) / (1024 * 1024)*/, SC_(-1.37774249380686777043369399806210229535671843632174587432454e-7) }},
+            {{ SC_(0.0), SC_(8.65372753143310546875) /*T(9074091.0) / (1024 * 1024)*/, SC_(1.03553057441100845081018471279571355857520645127532785991335e-7) }},
+            {{ SC_(0.0), SC_(11.791534423828125) /*T(12364320.0) / (1024 * 1024)*/, SC_(-3.53017140778223781420794006033810387155048392363051866610931e-9) }},
+        }};
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 8> j1_data = {{
+            {{ SC_(1.0), SC_(0.0), SC_(0.0) }},
+            {{ SC_(1.0), SC_(1.0), SC_(0.4400505857449335159596822037189149131274) }},
+            {{ SC_(1.0), SC_(-2.0), SC_(-0.5767248077568733872024482422691370869203) }},
+            {{ SC_(1.0), SC_(4.0), SC_(-6.604332802354913614318542080327502872742e-02) }},
+            {{ SC_(1.0), SC_(-8.0), SC_(-0.2346363468539146243812766515904546115488) }},
+            {{ SC_(1.0), SC_(1e-05), SC_(4.999999999937500000000260416666666124132e-06) }},
+            {{ SC_(1.0), SC_(1e-10), SC_(4.999999999999999999993750000000000000000e-11) }},
+            {{ SC_(1.0), SC_(-1e+01), SC_(-4.347274616886143666974876802585928830627e-02) }},
+        }};
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 5> j1_tricky = {{
+            // Big numbers make the accuracy of std::sin the limiting factor:
+            {{ SC_(1.0), SC_(1e+03), SC_(4.728311907089523917576071901216916285418e-03) }},
+            {{ SC_(1.0), SC_(1e+05), SC_(1.846757562882567716362123967114215743694e-03) }},
+            // test zeros:
+            {{ SC_(1.0), SC_(3.8317050933837890625) /*T(4017834) / (1024 * 1024)*/, SC_(3.53149033321258645807835062770856949751958513973522222203044e-7) }},
+            {{ SC_(1.0), SC_(7.01558589935302734375) /*T(7356375) / (1024 * 1024)*/, SC_(-2.31227973111067286051984021150135526024117175836722748404342e-7) }},
+            {{ SC_(1.0), SC_(10.1734676361083984375) /*T(10667654) / (1024 * 1024)*/, SC_(1.24591331097191900488116495350277530373473085499043086981229e-7) }},
+        }};
+
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 17> jn_data = {{
+            // This first one is a modified test case from https://svn.boost.org/trac/boost/ticket/2733
+            {{ SC_(-1.0), SC_(1.25), SC_(-0.510623260319880467069474837274910375352924050139633057168856) }},
+            {{ SC_(2.0), SC_(0.0), SC_(0.0) }},
+            {{ SC_(-2.0), SC_(0.0), SC_(0.0) }},
+            {{ SC_(2.0), SC_(1e-02), SC_(1.249989583365885362413250958437642113452e-05) }},
+            {{ SC_(5.0), SC_(10.0), SC_(-0.2340615281867936404436949416457777864635) }},
+            {{ SC_(5.0), SC_(-10.0), SC_(0.2340615281867936404436949416457777864635) }},
+            {{ SC_(-5.0), SC_(1e+06), SC_(7.259643842453285052375779970433848914846e-04) }},
+            {{ SC_(5.0), SC_(1e+06), SC_(-0.000725964384245328505237577997043384891484649290328285235308619) }},
+            {{ SC_(-5.0), SC_(-1.0), SC_(2.497577302112344313750655409880451981584e-04) }},
+            {{ SC_(10.0), SC_(10.0), SC_(0.2074861066333588576972787235187534280327) }},
+            {{ SC_(10.0), SC_(-10.0), SC_(0.2074861066333588576972787235187534280327) }},
+            {{ SC_(10.0), SC_(-5.0), SC_(1.467802647310474131107532232606627020895e-03) }},
+            {{ SC_(-10.0), SC_(1e+06), SC_(-3.310793117604488741264958559035744460210e-04) }},
+            {{ SC_(10.0), SC_(1e+06), SC_(-0.000331079311760448874126495855903574446020957243277028930713243) }},
+            {{ SC_(1e+02), SC_(8e+01), SC_(4.606553064823477354141298259169874909670e-06) }},
+            {{ SC_(1e+03), SC_(1e+05), SC_(1.283178112502480365195139312635384057363e-03) }},
+            {{ SC_(10.0), SC_(1e-100), SC_(2.69114445546737213403880070546737213403880070546737213403880e-1010) }},
+        }};
+
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 20> jv_data = {{
+            //SC_(-2.4), {{ SC_(0.0), std::numeric_limits<T>::infinity() }},
+            {{ SC_(22.5), SC_(0.0), SC_(0.0) }},
+            {{ SC_(2.3994140625) /*2457.0 / 1024*/, SC_(0.0009765625) /* 1 / 1024*/, SC_(3.80739920118603335646474073457326714709615200130620574875292e-9) }},
+            {{ SC_(5.5), SC_(3.1416015625) /* 3217/1024*/, SC_(0.0281933076257506091621579544064767140470089107926550720453038) }},
+            {{ SC_(-5.5), SC_(3.1416015625) /* 3217/1024*/, SC_(-2.55820064470647911823175836997490971806135336759164272675969) }},
+            {{ SC_(-5.5), SC_(1e+04), SC_(2.449843111985605522111159013846599118397e-03) }},
+            {{ SC_(5.5), SC_(1e+04), SC_(0.00759343502722670361395585198154817047185480147294665270646578) }},
+            {{ SC_(5.5), SC_(1e+06), SC_(-0.000747424248595630177396350688505919533097973148718960064663632) }},
+            {{ SC_(5.125), SC_(1e+06), SC_(-0.000776600124835704280633640911329691642748783663198207360238214) }},
+            {{ SC_(5.875), SC_(1e+06), SC_(-0.000466322721115193071631008581529503095819705088484386434589780) }},
+            {{ SC_(0.5), SC_(101.0), SC_(0.0358874487875643822020496677692429287863419555699447066226409) }},
+            {{ SC_(-5.5), SC_(1e+04), SC_(0.00244984311198560552211115901384659911839737686676766460822577) }},
+            {{ SC_(-5.5), SC_(1e+06), SC_(0.000279243200433579511095229508894156656558211060453622750659554) }},
+            {{ SC_(-0.5), SC_(101.0), SC_(0.0708184798097594268482290389188138201440114881159344944791454) }},
+            {{ SC_(-10.0002994537353515625) /* -10486074 / (1024*1024)*/, SC_(0.0009765625) /* 1/1024*/, SC_(1.41474013160494695750009004222225969090304185981836460288562e35) }},
+            {{ SC_(-10.0002994537353515625) /* -10486074 / (1024*1024)*/, SC_(15.0), SC_(-0.0902239288885423309568944543848111461724911781719692852541489) }},
+            {{ SC_(-10.0002994537353515625) /* -10486074 / (1024*1024)*/, SC_(100.0), SC_(-0.05476136603168065513386371539426045507795139476742228638) }},
+            {{ SC_(-10.0002994537353515625) /* -10486074 / (1024*1024)*/, SC_(20000.0), SC_(-0.00556869085445857782456414284057389040183758546505700058) }},
+            // Bug report https://svn.boost.org/trac/boost/ticket/4812:
+            {{ SC_(1.5), SC_(7.845703125) /* 8034/1024*/, SC_(0.0339477646369710610146236955872928005087352629422508823945264) }},
+            {{ SC_(8.5), SC_(12.566370614359172953850573533118011536788677597500423283899778369231265625144835994512139301368468271928592346053) /*Pi * 4*/, SC_(0.0436807946352780974532519564114026730332781693877984686758680) }},
+            {{ SC_(-8.5), SC_(12.566370614359172953850573533118011536788677597500423283899778369231265625144835994512139301368468271928592346053) /*Pi * 4*/, SC_(-0.257086543428224355151772807588810984369026142375675714560864) }},
+        }};
+
+        static const boost::array<boost::array<typename table_type<T>::type, 3>, 4> jv_large_data = {{
+            // Bug report https://svn.boost.org/trac/boost/ticket/5560:
+            {{ SC_(-0.5), SC_(1.2458993688871959419388378518880931736878259938089494331010226962863582408064841833232475731084062642684629e-206) /*static_cast<T>(std::ldexp(0.5, -683))*/, SC_(7.14823099969225685526188875418476476336424046896822867989728e102) }},
+            {{ SC_(256.0), SC_(512.0), SC_(0.00671672065717513246956991122723250578101154313313749938944675) }},
+            {{ SC_(-256.0), SC_(8.0), SC_(1.46866142030022704638298523775638527553596432641223316232692e-353) }},
+            {{ SC_(-2.5), SC_(4.0), SC_(-0.0145679476685218007666785535204236327832335803441449596297004) }},
+        }};
+
+
+#include "math/test/bessel_j_int_data.ipp"
+#include "math/test/bessel_j_data.ipp"
+#include "math/test/bessel_j_large_data.ipp"
+
+        auto const tester = [](T tolerance) {
+            return [tolerance](auto const& datum) {
+                auto const actual = test_fn<T>(datum[0], datum[1]);
+                BOOST_CHECK_EQUAL(actual, control_fn<T>(datum[0], datum[1]));
+                if (!(actual == datum[2])) {
+                    BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], tolerance);
+                }
+            };
+        };
+
+        ::for_each(j0_data, tester(4 * eps<T>));
+        ::for_each(j0_tricky, tester(10030000 * eps<T>));
+        ::for_each(j1_data, tester(12 * eps<T>));
+        ::for_each(j1_tricky, tester(35000 * eps<T>));
+        ::for_each(jn_data, tester(15 * eps<T>));
+        ::for_each(jv_data, tester(20 * eps<T>));
+        if (static_cast<T>(jv_large_data[0][1]) != 0)
+            ::for_each(jv_large_data, tester(10 * eps<T>));
+        ::for_each(bessel_j_int_data, tester(20 * eps<T>));
+        ::for_each(bessel_j_data, tester(10 * eps<T>));
+        ::for_each(bessel_j_large_data, tester(60 * eps<T>));
+
+        //
+        // Some special cases:
+        //
+        BOOST_CHECK_EQUAL(test_fn<T>(0, T(0)), T(1));
+        BOOST_CHECK_EQUAL(test_fn<T>(1, T(0)), T(0));
+        BOOST_CHECK_EQUAL(test_fn<T>(100000, T(0)), T(0));
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_cyl_bessel_j_boundaries, T, fptypes) {
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(static_cast<T>(1), qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+        BOOST_CHECK(std::isnan(test_fn<T>(qNaN<T>, static_cast<T>(1))));
+        BOOST_CHECK(verify_not_domain_error());
+
+        // domain is x >= 0
+
+        //
+        // Special cases that are errors:
+        //
+        BOOST_CHECK(std::isnan(test_fn<T>(T(-2.5), T(0))));
+        BOOST_CHECK(verify_domain_error());
+        BOOST_CHECK(std::isnan(test_fn<T>(T(-2.5), T(-2))));
+        BOOST_CHECK(verify_domain_error());
+        BOOST_CHECK(std::isnan(test_fn<T>(T(2.5), T(-2))));
+        BOOST_CHECK(verify_domain_error());
+    }
+} // namespace cyl_bessel_j
 
 namespace ellint_1 {
     template<class T>
@@ -926,6 +1217,60 @@ namespace legendre {
         BOOST_CHECK(verify_not_domain_error());
     }
 } // namespace legendre
+
+namespace sph_bessel {
+    template<class T>
+    constexpr auto control_fn = [](unsigned n, T x) {
+        return boost::math::sph_bessel(n, x);
+    };
+
+    template<class T>
+    constexpr auto test_fn = [](auto n, T) {
+        static_assert(always_false<decltype(n)>);
+    };
+    template<>
+    constexpr auto test_fn<float> = std::sph_besself;
+    template<>
+    constexpr auto test_fn<double> = std::sph_bessel;
+    template<>
+    constexpr auto test_fn<long double> = std::sph_bessell;
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_cyl_bessel_j, T, fptypes) {
+#include "math/test/sph_bessel_data.ipp"
+
+        auto const tester = [](T tolerance) {
+            return [tolerance](auto const& datum) {
+                unsigned const n = std::lround(datum[0]);
+                auto const actual = test_fn<T>(n, datum[1]);
+                BOOST_CHECK_EQUAL(actual, control_fn<T>(n, datum[1]));
+                if (!(actual == datum[2])) {
+                    BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], tolerance);
+                }
+            };
+        };
+
+        ::for_each(sph_bessel_data, tester(250 * eps<T>));
+
+        //
+        // Some special cases:
+        //
+        BOOST_CHECK_EQUAL(test_fn<T>(0, T(0)), T(1));
+        BOOST_CHECK_EQUAL(test_fn<T>(1, T(0)), T(0));
+        BOOST_CHECK_EQUAL(test_fn<T>(100000, T(0)), T(0));
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_cyl_bessel_j_boundaries, T, fptypes) {
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(1u, qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+
+        // domain is x >= 0
+        BOOST_CHECK(!std::isnan(test_fn<T>(1u, T(0))));
+        BOOST_CHECK(verify_not_domain_error());
+        BOOST_CHECK(std::isnan(test_fn<T>(1u, -eps<T>)));
+        BOOST_CHECK(verify_domain_error());
+    }
+} // namespace sph_bessel
 
 int main(int argc, char *argv[]) {
     auto const result = boost::unit_test::unit_test_main(init_unit_test, argc, argv);
