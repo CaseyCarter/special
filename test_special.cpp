@@ -1377,6 +1377,59 @@ namespace expint {
     }
 } // namespace expint
 
+namespace hermite {
+    template<class>
+    constexpr auto test_fn = [](unsigned, auto x) {
+        static_assert(always_false<decltype(x)>);
+    };
+    template<>
+    constexpr auto test_fn<float> = std::hermitef;
+    template<>
+    constexpr auto test_fn<double> = std::hermite;
+    template<>
+    constexpr auto test_fn<long double> = std::hermitel;
+
+    template<class T>
+    constexpr auto control_fn = [](unsigned n, T x) {
+        return boost::math::hermite(n, x);
+    };
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_hermite, T, fptypes) {
+#include "math/test/hermite.ipp"
+
+        for(auto const& datum : hermite) {
+            unsigned const n = std::lround(datum[0]);
+            auto const actual = test_fn<T>(n, datum[1]);
+            BOOST_CHECK_EQUAL(actual, control_fn<T>(n, datum[1]));
+            if (!(actual == datum[2])) // +/-inf is equal to, but not "close" to, +/-inf
+                BOOST_CHECK_CLOSE_FRACTION(actual, datum[2], 5 * eps<T>);
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_hermite_spots, T, fptypes) {
+        auto const tolerance = 2 * eps<T>;
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(0, static_cast<T>(1)), static_cast<T>(1.L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(1)), static_cast<T>(2.L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(2)), static_cast<T>(4.L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(10)), static_cast<T>(20), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(100)), static_cast<T>(200), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(1, static_cast<T>(1e6)), static_cast<T>(2e6), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, static_cast<T>(30)), static_cast<T>(5.896624628001300E+17L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, static_cast<T>(1000)), static_cast<T>(1.023976960161280E+33L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, static_cast<T>(10)), static_cast<T>(8.093278209760000E+12L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(10, static_cast<T>(-10)), static_cast<T>(8.093278209760000E+12L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(3, static_cast<T>(-10)), static_cast<T>(-7.880000000000000E+3L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(3, static_cast<T>(-1000)), static_cast<T>(-7.999988000000000E+9L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(3, static_cast<T>(-1000000)), static_cast<T>(-7.999999999988000E+18L), tolerance);
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_hermite_boundaries, T, fptypes) {
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(1u, qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+    }
+} // namespace hermite
+
 namespace laguerre {
     template<class>
     constexpr auto test_fn = [](unsigned, auto x) {
