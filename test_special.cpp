@@ -1318,6 +1318,65 @@ namespace ellint_3 {
     }
 } // namespace ellint_3
 
+namespace expint {
+    template<class T>
+    constexpr auto control_fn = [](T x) {
+        return boost::math::expint(x);
+    };
+
+    template<class T>
+    constexpr auto test_fn = [](auto x) {
+        static_assert(always_false<decltype(x)>);
+    };
+    template<>
+    constexpr auto test_fn<float> = std::expintf;
+    template<>
+    constexpr auto test_fn<double> = std::expint;
+    template<>
+    constexpr auto test_fn<long double> = std::expintl;
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_expint, T, fptypes) {
+        auto const tester = [](T tolerance) {
+            return [tolerance](auto const& datum) {
+                auto const actual = test_fn<T>(datum[0]);
+                BOOST_CHECK_EQUAL(actual, control_fn<T>(datum[0]));
+                BOOST_CHECK_CLOSE_FRACTION(actual, datum[1], tolerance);
+            };
+        };
+
+#include "math/test/expinti_data.ipp"
+#include "math/test/expinti_data_double.ipp"
+
+        ::for_each(expinti_data, tester(2 * eps<T>));
+
+        if(boost::math::tools::log_max_value<T>() > 100) {
+            ::for_each(expinti_data_double, tester(2 * eps<T>));
+        }
+
+        auto const tolerance = eps<T>;
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(1)/1024), static_cast<T>(-6.35327933972759151358547423727042905862963067106751711596065L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(0.125)), static_cast<T>(-1.37320852494298333781545045921206470808223543321810480716122L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(0.5)), static_cast<T>(0.454219904863173579920523812662802365281405554352642045162818L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(1)), static_cast<T>(1.89511781635593675546652093433163426901706058173270759164623L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(50.5)), static_cast<T>(1.72763195602911805201155668940185673806099654090456049881069e20L), tolerance);
+
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(-1)/1024), static_cast<T>(-6.35523246483107180261445551935803221293763008553775821607264L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(-0.125)), static_cast<T>(-1.62342564058416879145630692462440887363310605737209536579267L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(-0.5)), static_cast<T>(-0.559773594776160811746795939315085235226846890316353515248293L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(-1)), static_cast<T>(-0.219383934395520273677163775460121649031047293406908207577979L), tolerance);
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(static_cast<T>(-50.5)), static_cast<T>(-2.27237132932219350440719707268817831250090574830769670186618e-24L), tolerance);
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_expint_boundaries, T, fptypes) {
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+
+        BOOST_CHECK_EQUAL(test_fn<T>(static_cast<T>(0)), -inf<T>);
+        BOOST_CHECK(verify_not_domain_error());
+    }
+} // namespace expint
+
 namespace laguerre {
     template<class>
     constexpr auto test_fn = [](unsigned, auto x) {
