@@ -20,29 +20,7 @@ target_compile_options(boost INTERFACE /fp:precise)
 
 enable_testing()
 
-add_library(smf
-    assoc_laguerre.cpp assoc_laguerref.cpp
-    assoc_legendre.cpp assoc_legendref.cpp
-    beta.cpp betaf.cpp
-    comp_ellint1.cpp comp_ellint1f.cpp
-    comp_ellint2.cpp comp_ellint2f.cpp
-    comp_ellint3.cpp comp_ellint3f.cpp
-    cyl_bessel_i.cpp cyl_bessel_if.cpp
-    cyl_bessel_j.cpp cyl_bessel_jf.cpp
-    cyl_bessel_k.cpp cyl_bessel_kf.cpp
-    cyl_neumann.cpp cyl_neumannf.cpp
-    ellint1.cpp ellint1f.cpp
-    ellint2.cpp ellint2f.cpp
-    ellint3.cpp ellint3f.cpp
-    expint.cpp expintf.cpp
-    hermite.cpp hermitef.cpp
-    hypot3.cpp hypot3f.cpp
-    laguerre.cpp laguerref.cpp
-    legendre.cpp legendref.cpp
-    riemann_zeta.cpp riemann_zetaf.cpp
-    sph_bessel.cpp sph_besself.cpp
-    sph_legendre.cpp sph_legendref.cpp
-    sph_neumann.cpp sph_neumannf.cpp)
+add_library(smf smf.cpp)
 target_link_libraries(smf PRIVATE boost)
 target_compile_options(smf PRIVATE /std:c++latest /WX)
 
