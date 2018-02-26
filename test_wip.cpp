@@ -56,6 +56,52 @@ inline bool equal(Range1&& r1, Range2&& r2) {
     return std::equal(begin(r1), end(r1), begin(r2), end(r2));
 }
 
+namespace hypot_ {
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_hypot, T, fptypes) {
+        auto test_hypot = [](auto x, auto y, auto z, auto result) {
+            BOOST_CHECK_EQUAL(std::hypot(x, y, z), result);
+            BOOST_CHECK_EQUAL(std::hypot(x, z, y), result);
+            BOOST_CHECK_EQUAL(std::hypot(y, x, z), result);
+            BOOST_CHECK_EQUAL(std::hypot(y, z, x), result);
+            BOOST_CHECK_EQUAL(std::hypot(z, x, y), result);
+            BOOST_CHECK_EQUAL(std::hypot(z, y, x), result);
+        };
+
+        test_hypot(0.0, 0.0, 0.0, 0.0);
+        test_hypot(1.0, 0.0, 0.0, 1.0);
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_hypot_boundaries, T, fptypes) {
+        errno = 0;
+        BOOST_CHECK(std::isnan(std::hypot(qNaN<T>, 0.0, 0.0)));
+        BOOST_CHECK(verify_not_domain_error());
+        BOOST_CHECK(std::isnan(std::hypot(0.0, qNaN<T>, 0.0)));
+        BOOST_CHECK(verify_not_domain_error());
+        BOOST_CHECK(std::isnan(std::hypot(0.0, 0.0, qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+
+        auto test_hypot = [](auto x, auto y, auto z, auto result) {
+            BOOST_CHECK_EQUAL(std::hypot(x, y, z), result);
+            BOOST_CHECK(verify_not_domain_error());
+            BOOST_CHECK_EQUAL(std::hypot(x, z, y), result);
+            BOOST_CHECK(verify_not_domain_error());
+            BOOST_CHECK_EQUAL(std::hypot(y, x, z), result);
+            BOOST_CHECK(verify_not_domain_error());
+            BOOST_CHECK_EQUAL(std::hypot(y, z, x), result);
+            BOOST_CHECK(verify_not_domain_error());
+            BOOST_CHECK_EQUAL(std::hypot(z, x, y), result);
+            BOOST_CHECK(verify_not_domain_error());
+            BOOST_CHECK_EQUAL(std::hypot(z, y, x), result);
+            BOOST_CHECK(verify_not_domain_error());
+        };
+
+        test_hypot(+inf<T>,     0.0, 1.0, inf<T>);
+        test_hypot(-inf<T>,     0.0, 1.0, inf<T>);
+        test_hypot(+inf<T>, qNaN<T>, 1.0, inf<T>); // C11 F.10.4.3: "hypot(+/-inf, y)
+        test_hypot(-inf<T>, qNaN<T>, 1.0, inf<T>); // returns +inf even if y is NaN"
+    }
+} // namespace hypot_
+
 int main(int argc, char *argv[]) {
     auto const result = boost::unit_test::unit_test_main(init_unit_test, argc, argv);
     return result == boost::exit_success ? PM_TEST_PASS : PM_TEST_FAIL;
