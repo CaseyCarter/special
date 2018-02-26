@@ -10,9 +10,8 @@
 
 enum { PM_TEST_PASS = 0, PM_TEST_FAIL = 1 };
 
-#if _HAS_CXX17
 _STD_BEGIN
-
+#if _HAS_CXX17
 _NODISCARD double assoc_laguerre(unsigned _Degree, unsigned _Order, double _Value);
 _NODISCARD float assoc_laguerref(unsigned _Degree, unsigned _Order, float _Value);
 _NODISCARD inline long double assoc_laguerrel(const unsigned _Degree, const unsigned _Order,
@@ -184,6 +183,5 @@ template<class _Ty1,
 	return (_STD hypot(static_cast<_Common>(_Dx), static_cast<_Common>(_Dy),
 		static_cast<_Common>(_Dz)));
 	}
-
-_STD_END
 #endif /* _HAS_CXX17 */
+_STD_END
