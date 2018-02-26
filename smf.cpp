@@ -7,276 +7,559 @@
 #include <boost/math/special_functions.hpp>
 #include "special.hpp"
 
+_STD_BEGIN
 namespace {
-    template<class F> inline
-    auto _Boost_call(F f) {
-        try {
-            return f();
-        } catch(boost::math::rounding_error&) {
-            throw std::domain_error("FIXME: boost::math::rounding_error");
-        } catch(boost::math::evaluation_error&) {
-            throw std::domain_error("FIXME: boost::math::evaluation_error");
-        }
-    }
+template<class _Func> inline
+	auto _Boost_call(const _Func _Fn)
+	{
+	_TRY_BEGIN
+		return _Fn();
+	_CATCH(boost::math::rounding_error&)
+		_THROW(domain_error("FIXME: boost::math::rounding_error"));
+	_CATCH(boost::math::evaluation_error&)
+		_THROW(domain_error("FIXME: boost::math::evaluation_error"));
+	_CATCH_END
+	}
+} // unnamed namespace
+
+double assoc_laguerre(const unsigned _Pn, const unsigned _Pm, const double _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::laguerre(_Pn, _Pm, _Px); }));
+	}
+
+float assoc_laguerref(const unsigned _Pn, const unsigned _Pm, const float _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::laguerre(_Pn, _Pm, _Px); }));
+	}
+
+double assoc_legendre(const unsigned _Pl, const unsigned _Pm, const double _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::legendre_p(_Pl, _Pm, _Px); }));
+	}
+
+float assoc_legendref(const unsigned _Pl, const unsigned _Pm, const float _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::legendre_p(_Pl, _Pm, _Px); }));
+	}
+
+double beta(const double _Px, const double _Py)
+	{
+	return (_Boost_call([=]{ return boost::math::beta(_Px, _Py); }));
+	}
+
+float betaf(const float _Px, const float _Py)
+	{
+	return (_Boost_call([=]{ return boost::math::beta(_Px, _Py); }));
+	}
+
+double comp_ellint_1(const double _Pk)
+	{
+	return (_Boost_call([=]{ return boost::math::ellint_1(_Pk); }));
+	}
+
+float comp_ellint_1f(const float _Pk)
+	{
+	return (_Boost_call([=]{ return boost::math::ellint_1(_Pk); }));
+	}
+
+double comp_ellint_2(const double _Pk)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
+
+	return (_Boost_call([=]{ return boost::math::ellint_2(_Pk); }));
+	}
+
+float comp_ellint_2f(const float _Pk)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
+
+	return (_Boost_call([=]{ return boost::math::ellint_2(_Pk); }));
+	}
+
+double comp_ellint_3(const double _Pk, const double _Pnu)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
+
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
+
+	return (_Boost_call([=]{ return boost::math::ellint_3(_Pk, _Pnu); }));
+	}
+
+float comp_ellint_3f(const float _Pk, const float _Pnu)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
+
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
+
+	return (_Boost_call([=]{ return boost::math::ellint_3(_Pk, _Pnu); }));
+	}
+
+double cyl_bessel_i(const double _Pnu, const double _Px)
+	{
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
+
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::cyl_bessel_i(_Pnu, _Px); }));
 }
 
-double std::assoc_laguerre(unsigned n, unsigned m, double x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::laguerre(n, m, x); });
-}
+float cyl_bessel_if(const float _Pnu, const float _Px)
+	{
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
 
-float std::assoc_laguerref(unsigned n, unsigned m, float x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::laguerre(n, m, x); });
-}
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
 
-double std::assoc_legendre(unsigned l, unsigned m, double x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::legendre_p(l, m, x); });
-}
+	return (_Boost_call([=]{ return boost::math::cyl_bessel_i(_Pnu, _Px); }));
+	}
 
-float std::assoc_legendref(unsigned l, unsigned m, float x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::legendre_p(l, m, x); });
-}
+double cyl_bessel_j(const double _Pnu, const double _Px)
+	{
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
 
-double std::beta(double x, double y) {
-    return _Boost_call([=]{ return boost::math::beta(x, y); });
-}
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
 
-float std::betaf(float x, float y) {
-    return _Boost_call([=]{ return boost::math::beta(x, y); });
-}
+	return (_Boost_call([=]{ return boost::math::cyl_bessel_j(_Pnu, _Px); }));
+	}
 
-double std::comp_ellint_1(double k) {
-    return _Boost_call([=]{ return boost::math::ellint_1(k); });
-}
+float cyl_bessel_jf(const float _Pnu, const float _Px)
+	{
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
 
-float std::comp_ellint_1f(float k) {
-    return _Boost_call([=]{ return boost::math::ellint_1(k); });
-}
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
 
-double std::comp_ellint_2(double k) {
-    if (std::isnan(k)) return k;
-    return _Boost_call([=]{ return boost::math::ellint_2(k); });
-}
+	return (_Boost_call([=]{ return boost::math::cyl_bessel_j(_Pnu, _Px); }));
+	}
 
-float std::comp_ellint_2f(float k) {
-    if (std::isnan(k)) return k;
-    return _Boost_call([=]{ return boost::math::ellint_2(k); });
-}
+double cyl_bessel_k(const double _Pnu, const double _Px)
+	{
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
 
-double std::comp_ellint_3(double k, double nu) {
-    if (std::isnan(k)) return k;
-    if (std::isnan(nu)) return nu;
-    return _Boost_call([=]{ return boost::math::ellint_3(k, nu); });
-}
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
 
-float std::comp_ellint_3f(float k, float nu) {
-    if (std::isnan(k)) return k;
-    if (std::isnan(nu)) return nu;
-    return _Boost_call([=]{ return boost::math::ellint_3(k, nu); });
-}
+	return (_Boost_call([=]{ return boost::math::cyl_bessel_k(_Pnu, _Px); }));
+	}
 
-double std::cyl_bessel_i(double nu, double x) {
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::cyl_bessel_i(nu, x); });
-}
+float cyl_bessel_kf(const float _Pnu, const float _Px)
+	{
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
 
-float std::cyl_bessel_if(float nu, float x) {
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::cyl_bessel_i(nu, x); });
-}
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
 
-double std::cyl_bessel_j(double nu, double x) {
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::cyl_bessel_j(nu, x); });
-}
+	return (_Boost_call([=]{ return boost::math::cyl_bessel_k(_Pnu, _Px); }));
+	}
 
-float std::cyl_bessel_jf(float nu, float x) {
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::cyl_bessel_j(nu, x); });
-}
+double cyl_neumann(const double _Pnu, const double _Px)
+	{
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
 
-double std::cyl_bessel_k(double nu, double x) {
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::cyl_bessel_k(nu, x); });
-}
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
 
-float std::cyl_bessel_kf(float nu, float x) {
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::cyl_bessel_k(nu, x); });
-}
+	return (_Boost_call([=]{ return boost::math::cyl_neumann(_Pnu, _Px); }));
+	}
 
-double std::cyl_neumann(double nu, double x) {
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::cyl_neumann(nu, x); });
-}
+float cyl_neumannf(const float _Pnu, const float _Px)
+	{
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
 
-float std::cyl_neumannf(float nu, float x) {
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::cyl_neumann(nu, x); });
-}
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
 
-double std::ellint_1(double k, double phi) {
-    if (std::isnan(k)) return k;
-    if (std::isnan(phi)) return phi;
-    return _Boost_call([=]{ return boost::math::ellint_1(k, phi); });
-}
+	return (_Boost_call([=]{ return boost::math::cyl_neumann(_Pnu, _Px); }));
+	}
 
-float std::ellint_1f(float k, float phi) {
-    if (std::isnan(k)) return k;
-    if (std::isnan(phi)) return phi;
-    return _Boost_call([=]{ return boost::math::ellint_1(k, phi); });
-}
+double ellint_1(const double _Pk, const double _Pphi)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
 
-double std::ellint_2(double k, double phi) {
-    if (std::isnan(k)) return k;
-    if (std::isnan(phi)) return phi;
-    return _Boost_call([=]{ return boost::math::ellint_2(k, phi); });
-}
+	if (_CSTD isnan(_Pphi))
+		{
+		return (_Pphi);
+		}
 
-float std::ellint_2f(float k, float phi) {
-    if (std::isnan(k)) return k;
-    if (std::isnan(phi)) return phi;
-    return _Boost_call([=]{ return boost::math::ellint_2(k, phi); });
-}
+	return (_Boost_call([=]{ return boost::math::ellint_1(_Pk, _Pphi); }));
+	}
 
-double std::ellint_3(double k, double nu, double phi) {
-    if (std::isnan(k)) return k;
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(phi)) return phi;
-    return _Boost_call([=]{ return boost::math::ellint_3(k, nu, phi); });
-}
+float ellint_1f(const float _Pk, const float _Pphi)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
 
-float std::ellint_3f(float k, float nu, float phi) {
-    if (std::isnan(k)) return k;
-    if (std::isnan(nu)) return nu;
-    if (std::isnan(phi)) return phi;
-    return _Boost_call([=]{ return boost::math::ellint_3(k, nu, phi); });
-}
+	if (_CSTD isnan(_Pphi))
+		{
+		return (_Pphi);
+		}
 
-double std::expint(double x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::expint(x); });
-}
+	return (_Boost_call([=]{ return boost::math::ellint_1(_Pk, _Pphi); }));
+	}
 
-float std::expintf(float x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::expint(x); });
-}
+double ellint_2(const double _Pk, const double _Pphi)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
 
-double std::hermite(unsigned n, double x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::hermite(n, x); });
-}
+	if (_CSTD isnan(_Pphi))
+		{
+		return (_Pphi);
+		}
 
-float std::hermitef(unsigned n, float x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::hermite(n, x); });
-}
+	return (_Boost_call([=]{ return boost::math::ellint_2(_Pk, _Pphi); }));
+	}
 
-double std::laguerre(unsigned n, double x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::laguerre(n, x); });
-}
+float ellint_2f(const float _Pk, const float _Pphi)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
 
-float std::laguerref(unsigned n, float x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::laguerre(n, x); });
-}
+	if (_CSTD isnan(_Pphi))
+		{
+		return (_Pphi);
+		}
 
-double std::legendre(unsigned l, double x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::legendre_p(l, x); });
-}
+	return (_Boost_call([=]{ return boost::math::ellint_2(_Pk, _Pphi); }));
+	}
 
-float std::legendref(unsigned l, float x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::legendre_p(l, x); });
-}
+double ellint_3(const double _Pk, const double _Pnu, const double _Pphi)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
 
-double std::riemann_zeta(double x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::zeta(x); });
-}
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
 
-float std::riemann_zetaf(float x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::zeta(x); });
-}
+	if (_CSTD isnan(_Pphi))
+		{
+		return (_Pphi);
+		}
 
-double std::sph_bessel(unsigned n, double x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::sph_bessel(n, x); });
-}
+	return (_Boost_call([=]{ return boost::math::ellint_3(_Pk, _Pnu, _Pphi); }));
+	}
 
-float std::sph_besself(unsigned n, float x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::sph_bessel(n, x); });
-}
+float ellint_3f(const float _Pk, const float _Pnu, const float _Pphi)
+	{
+	if (_CSTD isnan(_Pk))
+		{
+		return (_Pk);
+		}
 
-double std::sph_legendre(unsigned l, unsigned m, double theta) {
-    if (std::isnan(theta)) return theta;
-    return _Boost_call([=]{ return boost::math::spherical_harmonic_r(l, m, theta, 0.0); });
-}
+	if (_CSTD isnan(_Pnu))
+		{
+		return (_Pnu);
+		}
 
-float std::sph_legendref(unsigned l, unsigned m, float theta) {
-    if (std::isnan(theta)) return theta;
-    return _Boost_call([=]{ return boost::math::spherical_harmonic_r(l, m, theta, 0.0f); });
-}
+	if (_CSTD isnan(_Pphi))
+		{
+		return (_Pphi);
+		}
 
-double std::sph_neumann(unsigned n, double x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::sph_neumann(n, x); });
-}
+	return (_Boost_call([=]{ return boost::math::ellint_3(_Pk, _Pnu, _Pphi); }));
+	}
 
-float std::sph_neumannf(unsigned n, float x) {
-    if (std::isnan(x)) return x;
-    return _Boost_call([=]{ return boost::math::sph_neumann(n, x); });
-}
+double expint(const double _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::expint(_Px); }));
+	}
+
+float expintf(const float _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::expint(_Px); }));
+	}
+
+double hermite(const unsigned _Pn, const double _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::hermite(_Pn, _Px); }));
+	}
+
+float hermitef(const unsigned _Pn, const float _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::hermite(_Pn, _Px); }));
+	}
+
+double laguerre(const unsigned _Pn, const double _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::laguerre(_Pn, _Px); }));
+	}
+
+float laguerref(const unsigned _Pn, const float _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::laguerre(_Pn, _Px); }));
+	}
+
+double legendre(const unsigned _Pl, const double _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::legendre_p(_Pl, _Px); }));
+	}
+
+float legendref(const unsigned _Pl, const float _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::legendre_p(_Pl, _Px); }));
+	}
+
+double riemann_zeta(const double _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::zeta(_Px); }));
+	}
+
+float riemann_zetaf(const float _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::zeta(_Px); }));
+	}
+
+double sph_bessel(const unsigned _Pn, const double _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::sph_bessel(_Pn, _Px); }));
+	}
+
+float sph_besself(const unsigned _Pn, const float _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::sph_bessel(_Pn, _Px); }));
+	}
+
+double sph_legendre(const unsigned _Pl, const unsigned _Pm, const double _Ptheta)
+	{
+	if (_CSTD isnan(_Ptheta))
+		{
+		return (_Ptheta);
+		}
+
+	return (_Boost_call([=]{ return boost::math::spherical_harmonic_r(_Pl, _Pm, _Ptheta, 0.0); }));
+	}
+
+float sph_legendref(const unsigned _Pl, const unsigned _Pm, const float _Ptheta)
+	{
+	if (_CSTD isnan(_Ptheta))
+		{
+		return (_Ptheta);
+		}
+
+	return (_Boost_call([=]{ return boost::math::spherical_harmonic_r(_Pl, _Pm, _Ptheta, 0.0f); }));
+	}
+
+double sph_neumann(const unsigned _Pn, const double _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::sph_neumann(_Pn, _Px); }));
+	}
+
+float sph_neumannf(const unsigned _Pn, const float _Px)
+	{
+	if (_CSTD isnan(_Px))
+		{
+		return (_Px);
+		}
+
+	return (_Boost_call([=]{ return boost::math::sph_neumann(_Pn, _Px); }));
+	}
 
 namespace {
-    template<class T> inline
-    T _Hypot3(T dx, T dy, T dz) _NOEXCEPT
-    {
-        static_assert(std::is_floating_point_v<T>);
-        dx = std::abs(dx);
-        dy = std::abs(dy);
-        dz = std::abs(dz);
+template<class _Ty> inline
+	_Ty _Hypot3(_Ty _Dx, _Ty _Dy, _Ty _Dz)
+	{
+	static_assert(is_floating_point_v<_Ty>);
+	_Dx = _CSTD fabs(_Dx);
+	_Dy = _CSTD fabs(_Dy);
+	_Dz = _CSTD fabs(_Dz);
 
-        constexpr T inf = std::numeric_limits<T>::infinity();
-        if (dx == inf || dy == inf || dz == inf) return inf;
+	constexpr _Ty _Inf = numeric_limits<_Ty>::infinity();
+	if (_Dx == _Inf || _Dy == _Inf || _Dz == _Inf)
+		{
+		return (_Inf);
+		}
 
-        if (dy > dx) std::swap(dx, dy);
-        if (dz > dx) std::swap(dx, dz);
+	if (_Dy > _Dx)
+		{
+		_STD swap(_Dx, _Dy);
+		}
 
-        constexpr T eps = boost::math::tools::epsilon<T>();
-        if (dx * eps >= dy && dx * eps >= dz) return dx;
+	if (_Dz > _Dx)
+		{
+		_STD swap(_Dx, _Dz);
+		}
 
-        auto fracsq = [](T const numerator, T const denominator) {
-            T const result = numerator / denominator;
-            return result * result;
-        };
+	constexpr _Ty _Eps = boost::math::tools::epsilon<_Ty>();
+	if (_Dx * _Eps >= _Dy && _Dx * _Eps >= _Dz)
+		{
+		return (_Dx);
+		}
 
-        return dx * std::sqrt(1 + fracsq(dy, dx) + fracsq(dz, dx));
-    }
-}
+	const auto _FracSq = [](const _Ty _Numerator, const _Ty _Denominator)
+		{
+		const _Ty result = _Numerator / _Denominator;
+		return (result * result);
+		};
 
-double std::hypot(double dx, double dy, double dz) _NOEXCEPT
-{
-    return _Hypot3<double>(dx, dy, dz);
-}
+	return (_Dx * _STD sqrt(1 + _FracSq(_Dy, _Dx) + _FracSq(_Dz, _Dx)));
+	}
+} // unnamed namespace
 
-float std::hypot(float dx, float dy, float dz) _NOEXCEPT
-{
-    return _Hypot3<float>(dx, dy, dz);
-}
+double hypot(const double _Dx, const double _Dy, const double _Dz)
+	{
+	return (_Hypot3<double>(_Dx, _Dy, _Dz));
+	}
+
+float hypot(const float _Dx, const float _Dy, const float _Dz)
+	{
+	return (_Hypot3<float>(_Dx, _Dy, _Dz));
+	}
+_STD_END

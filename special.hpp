@@ -165,12 +165,12 @@ _NODISCARD inline long double sph_neumannl(const unsigned _Arg1, const long doub
 	return (_STD sph_neumann(_Arg1, static_cast<double>(_Arg2)));
 	}
 
-_NODISCARD double hypot(double _Dx, double _Dy, double _Dz) _NOEXCEPT;
-_NODISCARD float hypot(float _Dx, float _Dy, float _Dz) _NOEXCEPT;
+_NODISCARD double hypot(double _Dx, double _Dy, double _Dz);
+_NODISCARD float hypot(float _Dx, float _Dy, float _Dz);
 _NODISCARD inline long double hypot(const long double _Dx, const long double _Dy,
-	const long double _Dz) _NOEXCEPT
+	const long double _Dz)
 	{
-	return (hypot(static_cast<double>(_Dx), static_cast<double>(_Dy), static_cast<double>(_Dz)));
+	return (_STD hypot(static_cast<double>(_Dx), static_cast<double>(_Dy), static_cast<double>(_Dz)));
 	}
 
 template<class _Ty1,
@@ -181,8 +181,8 @@ template<class _Ty1,
 	_NODISCARD inline auto hypot(const _Ty1 _Dx, const _Ty2 _Dy, const _Ty3 _Dz)
 	{	// bring mixed types to a common type
 	using _Common = _Common_float_type_t<_Ty1, _Common_float_type_t<_Ty2, _Ty3>>;
-	return _STD hypot(static_cast<_Common>(_Dx), static_cast<_Common>(_Dy),
-		static_cast<_Common>(_Dz));
+	return (_STD hypot(static_cast<_Common>(_Dx), static_cast<_Common>(_Dy),
+		static_cast<_Common>(_Dz)));
 	}
 
 _STD_END
