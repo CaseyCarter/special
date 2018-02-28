@@ -20,7 +20,7 @@ target_compile_options(boost INTERFACE /fp:precise)
 
 enable_testing()
 
-add_library(smf smf.cpp)
+add_library(smf special_math.cpp)
 target_link_libraries(smf PRIVATE boost)
 target_compile_options(smf PRIVATE /std:c++latest /WX)
 
@@ -33,3 +33,4 @@ endfunction(add_smf_test)
 
 add_smf_test(test_special test_special.cpp)
 add_smf_test(test_wip test_wip.cpp)
+
