@@ -34,3 +34,6 @@ endfunction(add_smf_test)
 add_smf_test(test_special test_special.cpp)
 add_smf_test(test_wip test_wip.cpp)
 
+add_executable(derp derp.cpp)
+target_link_libraries(derp smf)
+target_compile_options(derp PRIVATE /std:c++latest /WX)

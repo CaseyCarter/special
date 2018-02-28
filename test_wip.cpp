@@ -57,48 +57,41 @@ inline bool equal(Range1&& r1, Range2&& r2) {
 }
 
 namespace hypot_ {
-    BOOST_AUTO_TEST_CASE_TEMPLATE(test_hypot, T, fptypes) {
-        auto test_hypot = [](auto x, auto y, auto z, auto result) {
+    template<class T>
+    void single_check(T const x, T const y, T const z, T const result) {
+        if (std::isnan(result)) {
+            BOOST_CHECK(std::isnan(std::hypot(x, y, z)));
+        } else {
             BOOST_CHECK_EQUAL(std::hypot(x, y, z), result);
-            BOOST_CHECK_EQUAL(std::hypot(x, z, y), result);
-            BOOST_CHECK_EQUAL(std::hypot(y, x, z), result);
-            BOOST_CHECK_EQUAL(std::hypot(y, z, x), result);
-            BOOST_CHECK_EQUAL(std::hypot(z, x, y), result);
-            BOOST_CHECK_EQUAL(std::hypot(z, y, x), result);
-        };
+        }
+        BOOST_CHECK(verify_not_domain_error());
+    }
 
-        test_hypot(0.0, 0.0, 0.0, 0.0);
-        test_hypot(1.0, 0.0, 0.0, 1.0);
+    template<class T>
+    void permute(T const x, T const y, T const z, T const result) {
+        single_check(x, y, z, result);
+        single_check(x, z, y, result);
+        single_check(y, x, z, result);
+        single_check(y, z, x, result);
+        single_check(z, x, y, result);
+        single_check(z, y, x, result);
+    };
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_hypot, T, fptypes) {
+        permute(T{0}, T{0}, T{0}, T{0});
+        permute(T{1}, T{0}, T{0}, T{1});
     }
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_hypot_boundaries, T, fptypes) {
         errno = 0;
-        BOOST_CHECK(std::isnan(std::hypot(qNaN<T>, 0.0, 0.0)));
-        BOOST_CHECK(verify_not_domain_error());
-        BOOST_CHECK(std::isnan(std::hypot(0.0, qNaN<T>, 0.0)));
-        BOOST_CHECK(verify_not_domain_error());
-        BOOST_CHECK(std::isnan(std::hypot(0.0, 0.0, qNaN<T>)));
-        BOOST_CHECK(verify_not_domain_error());
+         // C11 F.10.4.3: "hypot(+/-inf, y) returns +inf even if y is NaN"
+        permute(+inf<T>,    T{0}, T{1}, inf<T>);
+        permute(-inf<T>,    T{0}, T{1}, inf<T>);
+        permute(+inf<T>, qNaN<T>, T{1}, inf<T>);
+        permute(-inf<T>, qNaN<T>, T{1}, inf<T>);
 
-        auto test_hypot = [](auto x, auto y, auto z, auto result) {
-            BOOST_CHECK_EQUAL(std::hypot(x, y, z), result);
-            BOOST_CHECK(verify_not_domain_error());
-            BOOST_CHECK_EQUAL(std::hypot(x, z, y), result);
-            BOOST_CHECK(verify_not_domain_error());
-            BOOST_CHECK_EQUAL(std::hypot(y, x, z), result);
-            BOOST_CHECK(verify_not_domain_error());
-            BOOST_CHECK_EQUAL(std::hypot(y, z, x), result);
-            BOOST_CHECK(verify_not_domain_error());
-            BOOST_CHECK_EQUAL(std::hypot(z, x, y), result);
-            BOOST_CHECK(verify_not_domain_error());
-            BOOST_CHECK_EQUAL(std::hypot(z, y, x), result);
-            BOOST_CHECK(verify_not_domain_error());
-        };
-
-        test_hypot(+inf<T>,     0.0, 1.0, inf<T>);
-        test_hypot(-inf<T>,     0.0, 1.0, inf<T>);
-        test_hypot(+inf<T>, qNaN<T>, 1.0, inf<T>); // C11 F.10.4.3: "hypot(+/-inf, y)
-        test_hypot(-inf<T>, qNaN<T>, 1.0, inf<T>); // returns +inf even if y is NaN"
+        // NaN with no infinity produces NaN
+        permute(qNaN<T>, T{0}, T{0}, qNaN<T>);
     }
 } // namespace hypot_
 
