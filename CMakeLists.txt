@@ -35,4 +35,5 @@ add_test(test_special test_special)
 #
 # add_executable(gen_hypot_data gen_hypot_data.cpp)
 # target_compile_options(gen_hypot_data PRIVATE /std:c++latest /WX)
+# target_compile_definitions(gen_hypot_data PRIVATE _CRT_SECURE_NO_WARNINGS)
 # target_link_libraries(gen_hypot_data boost_multi)
