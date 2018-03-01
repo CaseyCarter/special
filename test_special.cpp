@@ -1430,6 +1430,56 @@ namespace hermite {
     }
 } // namespace hermite
 
+namespace hypot_ {
+    template<class T>
+    void single_check(T const x, T const y, T const z, T const result, T const tolerance) {
+        auto const actual = std::hypot(x, y, z);
+        if (std::isnan(result)) {
+            BOOST_CHECK(std::isnan(actual));
+        } else if (!(actual == result)) {// +/-inf is equal to, but not "close" to, +/-inf
+            BOOST_CHECK_CLOSE_FRACTION(actual, result, tolerance);
+        }
+        BOOST_CHECK(verify_not_domain_error());
+    }
+
+    template<class T>
+    void permute(T const x, T const y, T const z, T const result, T const tolerance) {
+        single_check(x, y, z, result, tolerance);
+        single_check(x, z, y, result, tolerance);
+        single_check(y, x, z, result, tolerance);
+        single_check(y, z, x, result, tolerance);
+        single_check(z, x, y, result, tolerance);
+        single_check(z, y, x, result, tolerance);
+    };
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_hypot, T, fptypes) {
+        single_check(T{0}, T{0}, T{0}, T{0}, 0 * eps<T>);
+        permute(T{1}, T{0}, T{0}, T{1}, 0 * eps<T>);
+
+#include "hypot_low_data.ipp"
+#include "hypot_high_data.ipp"
+
+        for (auto const& datum : hypot_low_data) {
+            permute(datum[0], datum[1], datum[2], datum[3], 4 * eps<T>);
+        }
+        for (auto const& datum : hypot_high_data) {
+            permute(datum[0], datum[1], datum[2], datum[3], 4 * eps<T>);
+        }
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_hypot_boundaries, T, fptypes) {
+        errno = 0;
+         // C11 F.10.4.3: "hypot(+/-inf, y) returns +inf even if y is NaN"
+        permute(+inf<T>,    T{0}, T{1}, inf<T>, 0 * eps<T>);
+        permute(-inf<T>,    T{0}, T{1}, inf<T>, 0 * eps<T>);
+        permute(+inf<T>, qNaN<T>, T{1}, inf<T>, 0 * eps<T>);
+        permute(-inf<T>, qNaN<T>, T{1}, inf<T>, 0 * eps<T>);
+
+        // NaN with no infinity produces NaN
+        permute(qNaN<T>, T{0}, T{0}, qNaN<T>, 0 * eps<T>);
+    }
+} // namespace hypot_
+
 namespace laguerre {
     template<class>
     constexpr auto test_fn = [](unsigned, auto x) {

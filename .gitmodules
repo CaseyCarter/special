@@ -129,3 +129,9 @@
 [submodule "optional"]
 	path = optional
 	url = https://github.com/boostorg/optional
+[submodule "multiprecision"]
+	path = multiprecision
+	url = https://github.com/boostorg/multiprecision
+[submodule "rational"]
+	path = rational
+	url = https://github.com/boostorg/rational
