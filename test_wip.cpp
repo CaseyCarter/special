@@ -78,7 +78,7 @@ namespace hypot_ {
     };
 
     BOOST_AUTO_TEST_CASE_TEMPLATE(test_hypot, T, fptypes) {
-        permute(T{0}, T{0}, T{0}, T{0});
+        single_check(T{0}, T{0}, T{0}, T{0});
         permute(T{1}, T{0}, T{0}, T{1});
     }
 

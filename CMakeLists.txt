@@ -16,17 +16,17 @@ target_compile_definitions(boost INTERFACE
     BOOST_CONFIG_SUPPRESS_OUTDATED_MESSAGE
     BOOST_MATH_DOMAIN_ERROR_POLICY=errno_on_error
     BOOST_MATH_OVERFLOW_ERROR_POLICY=ignore_error)
-target_compile_options(boost INTERFACE /fp:precise)
+target_compile_options(boost INTERFACE /fp:precise /EHsc)
 
 enable_testing()
 
 add_library(smf special_math.cpp)
 target_link_libraries(smf PRIVATE boost)
-target_compile_options(smf PRIVATE /std:c++latest /WX)
+target_compile_options(smf PRIVATE /std:c++latest /WX /EHsc)
 
 function(add_smf_test TESTNAME SOURCES...)
   add_executable(${TESTNAME} ${SOURCES...})
-  target_compile_options(${TESTNAME} PRIVATE /std:c++latest /WX)
+  target_compile_options(${TESTNAME} PRIVATE /std:c++latest /WX /EHsc)
   target_link_libraries(${TESTNAME} smf boost)
   add_test(${TESTNAME} ${TESTNAME})
 endfunction(add_smf_test)
@@ -35,5 +35,5 @@ add_smf_test(test_special test_special.cpp)
 add_smf_test(test_wip test_wip.cpp)
 
 add_executable(derp derp.cpp)
-target_link_libraries(derp smf)
-target_compile_options(derp PRIVATE /std:c++latest /WX)
+target_link_libraries(derp smf boost)
+target_compile_options(derp PRIVATE /std:c++latest /WX /EHsc)
