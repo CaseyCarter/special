@@ -129,9 +129,13 @@
 [submodule "optional"]
 	path = optional
 	url = https://github.com/boostorg/optional
+	shallow = true
+# Only for gen_hypot_data:
 [submodule "multiprecision"]
 	path = multiprecision
 	url = https://github.com/boostorg/multiprecision
+	shallow = true
 [submodule "rational"]
 	path = rational
 	url = https://github.com/boostorg/rational
+	shallow = true
