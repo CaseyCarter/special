@@ -1818,6 +1818,56 @@ namespace sph_bessel {
     }
 } // namespace sph_bessel
 
+namespace sph_legendre {
+    template<class T>
+    constexpr auto control_fn = [](unsigned l, unsigned m, T theta) {
+        return boost::math::spherical_harmonic_r(l, m, theta, T{0});
+    };
+
+    template<class T>
+    constexpr auto test_fn = [](unsigned l, unsigned m, auto theta) {
+        static_assert(always_false<decltype(theta)>);
+    };
+    template<>
+    constexpr auto test_fn<float> = std::sph_legendref;
+    template<>
+    constexpr auto test_fn<double> = std::sph_legendre;
+    template<>
+    constexpr auto test_fn<long double> = std::sph_legendrel;
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_sph_legendre, T, fptypes) {
+#if 0 // UNUSED
+        auto const tester = [&count](T tolerance) {
+            return [tolerance, &count](auto const& datum) {
+                if (datum[3] != 0) return;
+                ++count;
+                unsigned const l = std::lround(datum[0]);
+                unsigned const m = std::lround(datum[1]);
+                auto const actual = test_fn<T>(l, m, datum[2]);
+                BOOST_CHECK_EQUAL(actual, control_fn<T>(l, m, datum[2]));
+                if (!(actual == datum[4])) {
+                    BOOST_CHECK_CLOSE_FRACTION(actual, datum[4], tolerance);
+                }
+            };
+        };
+#endif
+        // FIXME: more data
+
+        //
+        // Some special cases:
+        //
+        auto const tolerance = 2 * eps<T>;
+        BOOST_CHECK_CLOSE_FRACTION(test_fn<T>(3u, 2u, static_cast<T>(0.5)),
+            static_cast<T>(0.2061460599687871330692286791802688341213L), tolerance);
+    }
+
+    BOOST_AUTO_TEST_CASE_TEMPLATE(test_sph_legendre_boundaries, T, fptypes) {
+        errno = 0;
+        BOOST_CHECK(std::isnan(test_fn<T>(1u, 1u, qNaN<T>)));
+        BOOST_CHECK(verify_not_domain_error());
+    }
+} // namespace sph_legendre
+
 namespace sph_neumann {
     template<class T>
     constexpr auto control_fn = [](unsigned n, T x) {
