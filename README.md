@@ -11,8 +11,3 @@ Checkout all of the submodules at the tag for the appropriate Boost version:
 ```
 git submodule for_each "git checkout boost-1.66.0"
 ```
-
-## TODO
-* Build, build, build!
-* special_math.cpp needs the "new sources" procedure.
-* plumb in the test

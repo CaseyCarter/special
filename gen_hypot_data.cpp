@@ -81,3 +81,51 @@ int main() {
     generate(1.0, "low");
     generate(1.0e64, "high");
 }
+
+#if 0 // This is "gen_sph_legendre_data.cpp":
+#include <cmath>
+#include <algorithm>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <random>
+#include <tuple>
+#include <vector>
+
+int main() {
+    constexpr auto n = 64;
+    auto const pi = std::acos(-1);
+    auto engine = std::mt19937{};
+
+    std::vector<std::tuple<unsigned, unsigned, double, double>> data;
+
+    auto ldist = std::uniform_int_distribution<unsigned>{0, 12};
+    auto tdist = std::uniform_real_distribution<double>{0, pi};
+
+    for (auto i = 0; i < n; ++i) {
+        auto const l = ldist(engine);
+        auto const theta = tdist(engine);
+        auto mdist = std::uniform_int_distribution<unsigned>{0, l};
+        auto const m = mdist(engine);
+        auto const result = std::sph_legendre(l, m, theta);
+        data.emplace_back(l, m, theta, result);
+    }
+
+    std::sort(data.begin(), data.end());
+
+    std::cout.precision(std::numeric_limits<double>::digits10+4);
+    std::cout.flags(std::ios_base::fmtflags(std::ios_base::scientific));
+    std::cout << "static constexpr std::array<std::tuple<unsigned, unsigned, T, T>, " << n << "> sph_legendre_data = {{\n";
+
+    auto const print = [](unsigned l, unsigned m, double theta, double result) {
+        std::cout << "    { " << std::setw(3) << l << "u, " << std::setw(3) << m << "u, T(" << theta << "L), T("
+            << (result < 0 ? "" : " ") << result << "L) },\n";
+    };
+
+    for (auto const& t : data) {
+        std::apply(print, t);
+    }
+
+    std::cout << "}};\n";
+}
+#endif
